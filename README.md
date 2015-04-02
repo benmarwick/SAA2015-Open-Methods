@@ -1,7 +1,8 @@
 # SAA2015-Open-Methods
 A repository for materials relating to the [SAA2015](http://saa.org/AbouttheSociety/AnnualMeeting/tabid/138/Default.aspx) session on **Open Methods in Archaeology**
 
-[221] ELECTRONIC SYMPOSIUM OPEN METHODS IN ARCHAEOLOGY: HOW TO ENCOURAGE REPRODUCIBLE RESEARCH AS THE DEFAULT PRACTICE
+[221] ELECTRONIC SYMPOSIUM
+OPEN METHODS IN ARCHAEOLOGY: HOW TO ENCOURAGE REPRODUCIBLE RESEARCH AS THE DEFAULT PRACTICE
 (Sponsored by Digital Data Interest Group)
 
 Room: Union Square 1
