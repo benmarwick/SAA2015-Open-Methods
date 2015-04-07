@@ -12,7 +12,7 @@ Chairs: Ben Marwick, Mark Lake and Andrew Bevan
 Participants:
 
 * Ben Marwick—Reproducible Research in Archaeology: Basic Principles and Common Tools
-* Thomas Dye—Compendia and Collaboration: A Case Study from Hawai`i
+* [Thomas Dye—Compendia and Collaboration: A Case Study from Hawai`i](/Dye)
 * Julian Richards—Encouraging Open Methods via Data Repositories
 * Mark Madsen—Tools for Transparency and Replicability of Simulation in Archaeology
 * C. Michael Barton—Opening the Black Box: Enabling Transparency in Computation
