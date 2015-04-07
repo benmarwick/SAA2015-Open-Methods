@@ -1,0 +1,310 @@
+#+TITLE: Compendia and Collaboration
+#+AUTHOR: Thomas S. Dye
+#+DATE: April 17, 2015
+
+#+CALL: latex-presentation-title-slide() :results latex
+
+* Advertising the Reproducible Research Project[[footcite:dye11:_model_age_estim_polyn_colon_hawaii][;;Dye 2011]]
+{{{center}}}
+{{{sizefig}}}
+[[file:~/Public/projects/943-saa-2015/figure/advertisement.pdf]]
+
+* A Public Repository for the Project Compendium[[footcite:dye12][;;GitHub page]]
+{{{center}}}
+{{{sizefig}}}
+[[file:~/Public/projects/943-saa-2015/figure/github.pdf]]
+
+* Org Mode: A Tool for Reproducible Research[[footcite:schulte12:_multi_languag_comput_envir_liter][;;Schulte et al. 2012]]
+{{{center}}}
+
+[[file:~/Public/projects/943-saa-2015/figure/colonization-org-mode.pdf]]
+
+* Org Mode: Source Code for Figure 1
+{{{center}}}
+{{{sizefig}}}
+[[file:~/Public/projects/943-saa-2015/figure/graphics-org-mode.pdf]]
+
+* Figure 1 as it Appears in the Advertisement[[footcite:dye11:_model_age_estim_polyn_colon_hawaii][134;;Dye 2011]]
+{{{center}}}
+{{{sizefig}}}
+[[file:~/Public/projects/943-saa-2015/figure/two-colonization-dates.pdf]]
+* Org Mode: Source Code for a Web Page
+{{{center}}}
+{{{sizefig}}}
+[[file:~/Public/projects/943-saa-2015/figure/web-site-org-mode.pdf]]
+* Web Page with BCal Project Instructions[[footcite:dye12:_hawaii_colon][;;Web site]]
+{{{center}}}
+{{{sizefig}}}
+[[file:~/Public/projects/943-saa-2015/figure/colonization-web-site.pdf]]
+
+* Advertising the Model-based Collaboration[[footcite:athens14:_paleoen_archaeol_model_based_age][;;athens et al. 2014]]
+{{{center}}}
+{{{sizefig}}}
+[[file:~/Public/projects/943-saa-2015/figure/collaboration.pdf]]
+
+* Model-based Collaboration Yields Results[[footcite:dyess:_datin_remot_ocean][Figure 4;;Dye in press]]
+{{{center}}}
+{{{sizefig}}}
+[[file:~/Public/projects/943-saa-2015/figure/settlement.pdf]]
+
+* Take Away: Reproduce!
+
+  - Archaeological field investigation is not reproducible
+  - Archaeological analysis can be reproducible
+  - A compendium contains the information to reproduce an analysis
+  - Reproducible model-based analyses foster collaboration
+  - Collaboration and reproducibility constitute the scientific community
+
+* Bibliography                                                :ignoreheading:
+
+#+begin_latex
+\begingroup
+\parindent 0pt
+\parskip 2ex
+\def\enotesize{\footnotesize}
+\begin{flushleft}
+\theendnotes
+\end{flushleft}
+\endgroup
+#+end_latex
+
+
+* Instructions from Ben Marwick                                    :noexport:
+
+Here's a bit of an update on our "Open Methods" electronic symposium
+at the upcoming SAA meeting San Fransisco.
+
+Although we're listed it in the category of esymposium, we're going to
+treat it like a regular session and have presentations and Q&A pretty
+much as usual. The main reason for going for the esymposium format was
+to get DDIG sponsorship, which means we get a bit of publicity from
+them.
+
+According to the program, we have seven presentations and two hours,
+so 10 min of presentation (ie. ~10 slides) plus 5 mins of discussion
+per presentation would fill the time nicely, and leave some time for
+Mark Lake, who has kindly agreed to be a discussant.
+
+Please make the focus of your presentation your online compendia
+(eg. data and code repositories, etc.). This will help the session be
+a useful survey of the different tools and approaches that enable
+reproducible research in archaeology.
+
+Andy and I agreed not to burden everyone with requesting slides or
+papers in advance, so don't worry about that.
+
+I've made a github repository for the session to collect URLs to
+everyone's projects and other session artefacts. The repo is here:
+https://github.com/benmarwick/SAA2015-Open-Methods/ please feel free
+to make pull requests to add URLs to the materials that will feature
+in your presentation.
+
+Don't hesitate to contact me with any questions, etc.
+
+* Setup for slide show                                             :noexport:
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:{} arch:headline
+#+OPTIONS: author:t c:nil creator:nil d:(not "LOGBOOK") date:nil
+#+OPTIONS: e:t email:nil f:t inline:t num:t p:nil pri:nil prop:nil
+#+OPTIONS: stat:t tags:t tasks:t tex:t timestamp:t toc:nil todo:nil |:t
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+#+CREATOR: Emacs 24.3.1 (Org mode 8.2.6)
+#+STARTUP: entitiespretty
+#+LATEX_CLASS: latex-presentation
+#+LATEX_HEADER: \addbibresource{local.bib}
+#+MACRO: center @@latex:\centering @@
+#+MACRO: clearpage @@latex:\clearpage @@
+#+MACRO: sizefig #+attr_latex: :height 0.83\textheight
+#+MACRO: compactitem #+attr_latex: :environment compactitem
+#+MACRO: red \textcolor{red}{$1}
+#+MACRO: green \textcolor{PaleGreen4}{$1}
+
+** Source Code                                                     :noexport:
+
+*** Title slide
+
+ This source block is called at the start of each slide show, before
+ the first subheading.
+
+ #+name: latex-presentation-title-slide
+ #+header: :results latex silent
+ #+header: :exports results
+ #+begin_src emacs-lisp
+   (format "\\thispagestyle{empty}
+   \\begin{tikzpicture}[remember picture,overlay]
+     \\node [xshift=\\paperwidth/2, yshift=-\\paperheight/2] (mytitlepage) at
+     (current page.north west)[rectangle, fill, inner sep=0pt, minimum
+     width=\\paperwidth, minimum height=\\paperheight, top
+     color=mybgcolor!64, bottom color=mybgcolor]{}; 
+     \\draw (0,12mm)
+       node [right, text width=110mm, anchor=west] {%%\\flushright
+         \\color{mybgcolor!20} \\huge \\myhead};
+     \\draw (\\paperwidth/2.5,-\\paperheight/2)
+       node [right, text width=150mm, anchor=west] {\\color{mybgcolor!20} \\large
+         \\myauthor};
+     \\draw (\\paperwidth/2.5,-\\paperheight/2-5 mm)
+       node [right, text width=150mm, anchor=west] {\\color{mybgcolor!20} \\large
+         \\myuni};
+   \\end{tikzpicture}%%
+   \\clearpage")
+ #+end_src
+
+*** Presentation class
+
+ #+name: latex-presentation
+ #+header: :results silent
+ #+BEGIN_SRC emacs-lisp
+   (require 'ox-latex)
+   (add-to-list 'org-latex-packages-alist '("pdfpagemode=FullScreen,colorlinks=true,urlcolor=SteelBlue4,linkcolor=Firebrick4,citecolor=Green4" "hyperref"))
+   (add-to-list 'org-latex-packages-alist '("" "newunicodechar"))
+   (add-to-list 'org-latex-packages-alist '("AUTO" "inputenc"))
+   (add-to-list 'org-latex-packages-alist '("style=verbose-trad1, notetype=endonly" "biblatex-chicago"))
+   (add-to-list 'org-latex-packages-alist '("" "endnotes"))
+   (add-to-list 'org-latex-packages-alist '("" "booktabs"))
+   (add-to-list 'org-latex-packages-alist '("" "paralist"))
+   (add-to-list 'org-latex-packages-alist '("" "tabularx"))
+   (add-to-list 'org-latex-packages-alist '("" "tikz"))
+   (add-to-list 'org-latex-packages-alist '("" "graphicx"))
+   (add-to-list 'org-latex-packages-alist '("" "bm"))
+   (add-to-list 'org-latex-packages-alist '("" "tocstyle"))
+   (add-to-list 'org-latex-packages-alist '("" "titlesec"))
+   (add-to-list 'org-latex-packages-alist '("" "scrpage2"))
+   (add-to-list 'org-latex-packages-alist '("includeheadfoot, top=3.5mm, bottom=3.5mm, left=5.5mm, right=5.5mm, headsep=6.5mm, footskip=8.5mm" "geometry"))
+   (add-to-list 'org-latex-packages-alist '("" "calc"))
+   (add-to-list 'org-latex-packages-alist '("" "xcolor"))
+   (add-to-list 'org-latex-packages-alist '("" "microtype"))
+   (add-to-list 'org-latex-packages-alist '("american" "babel"))
+   (add-to-list 'org-latex-packages-alist '("bitstream-charter" "mathdesign"))
+   (add-to-list 'org-latex-packages-alist '("T1" "fontenc"))
+   (setq org-export-latex-hyperref-format "\\ref{%s}")
+   (setq org-latex-tables-booktabs t)
+   (setq org-latex-remove-logfiles nil)
+   (add-to-list 'org-latex-classes
+                '("latex-presentation"
+                  "\\documentclass[x11names,paper=128mm:96mm,fontsize=11pt,pagesize,parskip=half-,numbers=noendperiod,captions=nooneline]{scrartcl}
+                         [NO-DEFAULT-PACKAGES]
+                         [PACKAGES]
+                         [EXTRA]
+% missing Welsh coverage
+\\newunicodechar{Ŵ}{\\^W}
+\\newunicodechar{ŵ}{\\^w}
+\\newunicodechar{Ŷ}{\\^Y}
+\\newunicodechar{ŷ}{\\^y}
+
+% Latin vowels with prosodic marks    
+\\newunicodechar{Ĕ}{\\u{E}}
+\\newunicodechar{ĕ}{\\u{e}}
+\\newunicodechar{Ĭ}{\\u{I}}
+\\newunicodechar{ĭ}{\\u{\\i}}
+\\newunicodechar{Ŏ}{\\u{O}}
+\\newunicodechar{ŏ}{\\u{o}}
+\\newunicodechar{Ŭ}{\\u{U}}
+\\newunicodechar{ŭ}{\\u{u}}
+\\newunicodechar{Ā}{\\=A}
+\\newunicodechar{ā}{\\=a}
+\\newunicodechar{Ē}{\\=E}
+\\newunicodechar{ē}{\\=e}
+\\newunicodechar{Ī}{\\=I}
+\\newunicodechar{ī}{\\={\\i}}
+\\newunicodechar{Ō}{\\=O}
+\\newunicodechar{ō}{\\=o}
+\\newunicodechar{Ū}{\\=U}
+\\newunicodechar{ū}{\\=u}
+\\newunicodechar{Ȳ}{\\=Y}
+\\newunicodechar{ȳ}{\\=y}
+   \\colorlet{mybgcolor}{Azure4}
+   \\let\\footnote=\\endnote
+   \\let\\footnotemark=\\endnotemark
+   \\let\\footnotetext=\\endnotetext
+   \\newcommand{\\rcdatebf}[2]{\\ensuremath{\\mathbf{#1 \\pm #2}}}
+   \\newcommand{\\deltac}[1]{\\ensuremath{\\delta^{13}C = #1 \\permil}}
+
+   % page style
+   \\pagestyle{scrheadings}% activates pagestyle from scrpage2
+   \\clearscrheadfoot% clear head and foot
+   \\setkomafont{pageheadfoot}{\\normalfont\\color{mybgcolor!20}\\sffamily}% setting for page head and foot
+   % optical vertical centering of page contents
+   \\makeatletter
+   \\renewcommand*{\\@textbottom}{\\vskip \\z@ \\@plus 1fil}
+   \\newcommand*{\\@texttop}{\\vskip \\z@ \\@plus .5fil}
+   \\addtolength{\\parskip}{\\z@\\@plus .25fil}% stretch parskip
+   \\makeatother
+   \\ihead{% head left
+     \\hspace{-2mm}%
+     \\begin{tikzpicture}[remember picture,overlay]
+     \\node [xshift=\\paperwidth/2,yshift=-\\headheight] (mybar) at
+     (current page.north west)[rectangle, fill, inner sep=0pt, minimum
+     width=\\paperwidth, minimum height=2\\headheight, top
+     color=mybgcolor!64, bottom color=mybgcolor]{};% bar
+     \\node[below of=mybar, yshift=3.3mm, rectangle, shade,
+     inner sep=0pt, minimum width=128mm, minimum height=1.5mm, top
+     color=black!50, bottom color=white]{};%
+     shadow
+   \\end{tikzpicture}%
+   \\myhead
+   }
+   % \\newlength{\\footheight}
+   \\setlength{\\footheight}{8mm}
+   \\addtokomafont{pagefoot}{\\footnotesize}% size for foot
+   \\setkomafont{pagenumber}{\\color{mybgcolor!20}}% white page number
+   \\ifoot{% foot left
+     \\hspace{-2mm}%
+     \\begin{tikzpicture}[remember picture,overlay]
+       \\node [xshift=\\paperwidth/2, yshift=\\footheight/2] at (current
+       page.south west)[rectangle, fill, inner sep=0pt, minimum
+       width=\\paperwidth, minimum height =\\footheight, top
+       color=mybgcolor!64, bottom color= mybgcolor]{};% bar
+   \\end{tikzpicture}%
+   \\myauthor\\ \\raisebox{0.2mm}{$\\bm{\\vert}$}\\ \\myuni }
+   \\ofoot[\\pagemark\\hspace{-2mm}]{\\pagemark\\hspace{-2mm}}% foot right (plain pages do also have page numbers)
+   \\AtBeginDocument{\\renewcaptionname{american}{\\contentsname}{\\large Outline}}% change name of toc
+   \\makeatletter
+   \\newtocstyle[noonewithdot]{nodotnopagenumber}{% define tocstyle without dots and page numbers
+   \\settocfeature{pagenumberbox}{\\@gobble}%
+   }
+   \\makeatother
+
+   \\usetocstyle{nodotnopagenumber}
+
+   \\makeatletter
+   \\newcommand{\\myhead}{\\@title}
+   \\newcommand{\\myuni}{University of Hawai`i at M\\={a}noa}
+   \\newcommand{\\myauthor}{\\@author}
+   \\makeatother
+   \\newcommand{\\slidehead}[1]{\\subsubsection*{#1}}"
+                  ("\\clearpage\\slidehead{%s}" . "\\clearpage\\slidehead{%s}")
+                  ("\\clearpage\\slidehead{%s}" . "\\clearpage\\slidehead{%s}")
+                  ("\\clearpage\\slidehead{%s}" . "\\clearpage\\slidehead{%s}")
+                  ("\\clearpage\\slidehead{%s}" . "\\clearpage\\slidehead{%s}")
+                  ("\\clearpage\\slidehead{%s}" . "\\clearpage\\slidehead{%s}")))
+ #+END_SRC
+
+
+** Local variables                                                 :noexport:
+
+# Local Variables: 
+# eval: (require 'ox-latex)
+# org-fontify-quote-and-verse-blocks: t 
+# org-hide-macro-markers: t
+# org-latex-title-command: ""
+# eval: (and (fboundp 'org-sbe) (not (fboundp 'sbe)) (fset 'sbe 'org-sbe))
+# org-entities-user: nil
+# eval: (sbe "user-entities")
+# eval: (sbe "ebib-link")
+# eval: (sbe "change-cite-link")
+# eval: (sbe "ngz-nbsp")
+# eval: (sbe "define-standard-biblatex-commands")
+# eval: (sbe "define-biblatex-multicite-link")
+# org-latex-packages-alist: nil
+# eval: (sbe "latex-presentation")
+# eval: (sbe "set-pdf-process-biber")
+# eval: (sbe "tsd-latex-filter-all-cites")
+# eval: (sbe "rpr-filter-headline-tags")
+# eval: (add-to-list 'org-export-filter-headline-functions 'tsd-filter-headline-tags)
+# eval: (sbe "rpr-filter-section-star")
+# eval: (sbe "jk-keywords")
+# eval: (sbe "es-small-caps")
+# eval: (sbe "tsd-xref")
+# End:
+
+
