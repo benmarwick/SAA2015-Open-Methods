@@ -5,6 +5,8 @@ A repository for materials relating to the [SAA2015](http://saa.org/AbouttheSoci
 OPEN METHODS IN ARCHAEOLOGY: HOW TO ENCOURAGE REPRODUCIBLE RESEARCH AS THE DEFAULT PRACTICE
 (Sponsored by Digital Data Interest Group)
 
+[Abstracts are online at tDAR](http://core.tdar.org/collection/29739/open-methods-in-archaeology-how-to-encourage-reproducible-research-as-the-default-practice)
+
 Room: Union Square 1
 Time: 1:00 PM - 3:00 PM
 Chairs: Ben Marwick, Mark Lake and Andrew Bevan
