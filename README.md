@@ -19,4 +19,4 @@ Participants:
 * [Mark Madsen and Carl Lipo—Tools for Transparency and Replicability of Simulation in Archaeology](/MadsenLipo)
 * C. Michael Barton—Opening the Black Box: Enabling Transparency in Computation
 * Fabrizio Galeazzi—ADS 3D Viewer: An Example of Open 3D Real-Time Visualization System in Archaeology
-* Andrew Bevan—Scripting the Spatial Analysis of Archaeological Datasets
+* [Andrew Bevan—Scripting the Spatial Analysis of Archaeological Datasets](/Bevan)
