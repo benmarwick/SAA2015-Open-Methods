@@ -1,0 +1,1773 @@
+threecomp <- totalcomps#
+threecomp[] <- NA
+threecomp
+# The following might be better via apply()#
+for (a in 1:ncol(threecomp)){#
+    for (b in 1:nrow(threecomp)){#
+     focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+     othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+ }#
+}
+focalpair
+length(othercoins)
+length(names(threecomp))
+othercoins
+threecomp <- totalcomps#
+threecomp[] <- NA#
+#
+# The following might be better via apply()#
+for (a in 1:ncol(threecomp)){#
+    for (b in 1:nrow(threecomp)){#
+        if (b != a){#
+            focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+            othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+        }#
+    }#
+}
+focalpair
+othercoins
+length(othercoins)
+threecomp <- totalcomps#
+threecomp[] <- NA#
+# Assign a random third coin in the comparison (might be better via apply())#
+for (a in 1:nrow(threecomp)){#
+    for (b in 1:ncol(threecomp)){#
+        if (b != a){#
+            focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+            othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+            threecomp[a,b] <- othercoins[sample(1:length(othercoins), 1)]#
+        }#
+    }#
+}
+threecomp
+lower.tri(threecomp)
+threecomp[lower.tri(threecomp)]
+threecomp[lower.tri(threecomp),]
+threecomp[lower.tri(threecomp),,drop=F]
+threecomp[lower.tri(threecomp)]
+class(threecomp)
+as.data.frame(threecomp[lower.tri(threecomp)])
+threecomp/lower.tri(threecomp)]
+threecomp/lower.tri(threecomp)
+lower.tri(threecomp)
+threecomp/(lower.tri(threecomp)+0)
+lower.tri(threecomp)+0
+ddd <- lower.tri(threecomp)+0
+threecomp / ddd
+threecomp
+smpls <- vector("list", drawspercoinpair/2)#
+#
+# Each list item will store the usual pairwise dataframe (with rows and columns as the coin names) and the row-column node will store the name of the third coin in the comparison#
+threecomp <- totalcomps#
+threecomp[] <- NA
+smpls
+smpls[[1]]
+for (i in 1: length(smpls)){#
+    # Clearly all the for loops are not optimal...#
+    for (a in 1:nrow(threecomp)){#
+        for (b in 1:ncol(threecomp)){#
+            if (b != a){#
+                focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+                othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+                threecomp[a,b] <- othercoins[sample(1:length(othercoins), 1)]#
+            }#
+        }#
+    }#
+    smpls[[i]] <- threecomp#
+}
+# Create a list for the different draws, but as per below, we will get two draws per list item, so#
+smpls <- vector("list", drawspercoinpair/2)#
+#
+# For each list item create a pairwise matrix and assign a random third coin at each matrix node (with NA diagnoal). Hence each matrix holds two random draws per coin pair (upper and lower triangle).#
+for (i in 1: length(smpls)){#
+    # Clearly all the for loops are not optimal...#
+    threecomp <- totalcomps#
+    threecomp[] <- NA#
+    for (a in 1:nrow(threecomp)){#
+        for (b in 1:ncol(threecomp)){#
+            if (b != a){#
+                focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+                othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+                threecomp[a,b] <- othercoins[sample(1:length(othercoins), 1)]#
+            }#
+        }#
+    }#
+    smpls[[i]] <- threecomp#
+}
+smpls[[2]]
+d=1
+mysamples <- smpls[[d]]
+e=1
+focalcoin <- names(mysamples)[e]
+focalcoin
+for (d in 1:length(smpls)){#
+    mysamples <- smpls[[d]]#
+    for (e in 1:nrow(mysamples)){#
+        coin1 <- rownames(mysamples)[e]#
+        for (f in 1:ncol(mysamples)){#
+            if (f != e){#
+                coin2 <- colnames(mysamples)[f]#
+                coin3 <- mysamples[e,f]#
+                mycoins <- c(coin1,coin2,coin3) #
+                # Extract the relevant section of the overall distance matrix#
+                mycoindists <- coindistsdf[mycoins,mycoins].#
+#
+                #Assume any crowd-sourcing contributor would imperfectly judge the similarity of the coins.#
+                #So add some noise relative to the variability in distance values in the real coin distance matrix,#
+                #for example:#
+                noise <- 0.3 * (max(coindists) - min(coindists))#
+                # Then jitter the small distance matrix for the three coins accordingly.#
+                mynoisydists <- as.data.frame(sapply(mycoindists, jitter, amount=noise))#
+                rownames(mynoisydists) <- colnames(mynoisydists)#
+                mynoisydists <- as.dist(mynoisydists, upper=FALSE)#
+                # Now split these three coins into two groups#
+                mycoingroups <- pam(mynoisydists,2)$clustering#
+                samegroup <- outer(mycoingroups, mycoingroups,FUN="==")#
+                alltries <- samegroup#
+                alltries[] <- TRUE#
+                # Update the two overall matrices for coin-pairs grouped together and for total coin-pair comparisons#
+                mcols <- match(colnames(samegroup),colnames(coinssameclusters))#
+                mrows <- match(rownames(samegroup),rownames(coinssameclusters))#
+                coinssameclusters[mrows,mcols] <- coinssameclusters[mrows,mcols] + samegroup#
+                coinstotalcomps[mrows,mcols] <- coinstotalcomps[mrows,mcols] + alltries#
+            }#
+        }#
+    }#
+}
+quit("no")
+library(ape)#
+library(cluster)#
+#
+#############################
+#
+## Simulated Coin Dataset and Coin Distance Matrix ###
+#
+# As an example, create a colaescent tree of 99 coins (with 49 extinct 'nodes' and 50 'tips').#
+set.seed(10)#
+cointree <- rcoal(50, br=runif)#
+# Not yet sure why node labels won't plot#
+plot(cointree, show.tip.label=TRUE, show.node.label=TRUE, cex=0.5)#
+#  Brownian motion to simulate the evolution of 5 continuous, uncorrelated traits according to the above tree#
+cointraits <- replicate(5, rTraitCont(cointree, ancestor=TRUE))#
+# Calculate a Euclidean distance matrix#
+coindists <- dist(cointraits, method="euclidean")#
+coindistsdf <- as.data.frame(as.matrix(coindists))#
+#
+#############################
+#
+## Crowd-sourced Distance Matrix via Splitting of Three Coin Sets ###
+#
+# Set up some matrices to store counts of the number of instances (a) when coin pairs are assigned the same group, and (b) total number of comparisons of that coin pair.#
+sameclusters <- coindistsdf#
+sameclusters[] <- 0#
+totalcomps <- sameclusters#
+#
+# We wish to compare each coin in the dataset to each other one a certain number of times, with a third random coin as part of the comparison. For example, let start with, say, 10 comparison draws per pair of coins. In this case, it would therefore involve 99 * 98 * 10 = 97020 comparisons):#
+drawspercoinpair <- 10#
+# Create a list for the different draws, but as per below, we will get two draws per list item, so#
+smpls <- vector("list", drawspercoinpair/2)#
+#
+# For each list item create a pairwise matrix and assign a random third coin at each matrix node (with NA diagnoal). Hence each matrix holds two random draws per coin pair (upper and lower triangle).#
+for (i in 1: length(smpls)){#
+    # Clearly all the for loops are not optimal...#
+    threecomp <- totalcomps#
+    threecomp[] <- NA#
+    for (a in 1:nrow(threecomp)){#
+        for (b in 1:ncol(threecomp)){#
+            if (b != a){#
+                focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+                othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+                threecomp[a,b] <- othercoins[sample(1:length(othercoins), 1)]#
+            }#
+        }#
+    }#
+    smpls[[i]] <- threecomp#
+}#
+# So, in this example, an initial sweep through the data to reconstruct a distance matrix would make ten comparisons per coin pair and keep track of the results. For example (again, loops not optimal but for clarity):
+for (d in 1:length(smpls)){#
+    mysamples <- smpls[[d]]#
+    for (e in 1:nrow(mysamples)){#
+        coin1 <- rownames(mysamples)[e]#
+        for (f in 1:ncol(mysamples)){#
+            if (f != e){#
+                coin2 <- colnames(mysamples)[f]#
+                coin3 <- mysamples[e,f]#
+                mycoins <- c(coin1,coin2,coin3) #
+                # Extract the relevant section of the overall distance matrix#
+                mycoindists <- coindistsdf[mycoins,mycoins]#
+#
+                #Assume any crowd-sourcing contributor would imperfectly judge the similarity of the coins.#
+                #So add some noise relative to the variability in distance values in the real coin distance matrix,#
+                #for example:#
+                noise <- 0.3 * (max(coindists) - min(coindists))#
+                # Then jitter the small distance matrix for the three coins accordingly.#
+                mynoisydists <- as.data.frame(sapply(mycoindists, jitter, amount=noise))#
+                rownames(mynoisydists) <- colnames(mynoisydists)#
+                mynoisydists <- as.dist(mynoisydists, upper=FALSE)#
+                # Now split these three coins into two groups#
+                mycoingroups <- pam(mynoisydists,2)$clustering#
+                samegroup <- outer(mycoingroups, mycoingroups,FUN="==")#
+                alltries <- samegroup#
+                alltries[] <- TRUE#
+                # Update the two overall matrices for coin-pairs grouped together and for total coin-pair comparisons#
+                mcols <- match(colnames(samegroup),colnames(coinssameclusters))#
+                mrows <- match(rownames(samegroup),rownames(coinssameclusters))#
+                coinssameclusters[mrows,mcols] <- coinssameclusters[mrows,mcols] + samegroup#
+                coinstotalcomps[mrows,mcols] <- coinstotalcomps[mrows,mcols] + alltries#
+            }#
+        }#
+    }#
+}
+for (d in 1:length(smpls)){#
+    mysamples <- smpls[[d]]#
+    for (e in 1:nrow(mysamples)){#
+        coin1 <- rownames(mysamples)[e]#
+        for (f in 1:ncol(mysamples)){#
+            if (f != e){#
+                coin2 <- colnames(mysamples)[f]#
+                coin3 <- mysamples[e,f]#
+                mycoins <- c(coin1,coin2,coin3) #
+                # Extract the relevant section of the overall distance matrix#
+                mycoindists <- coindistsdf[mycoins,mycoins]#
+#
+                #Assume any crowd-sourcing contributor would imperfectly judge the similarity of the coins.#
+                #So add some noise relative to the variability in distance values in the real coin distance matrix,#
+                #for example:#
+                noise <- 0.3 * (max(coindists) - min(coindists))#
+                # Then jitter the small distance matrix for the three coins accordingly.#
+                mynoisydists <- as.data.frame(sapply(mycoindists, jitter, amount=noise))#
+                rownames(mynoisydists) <- colnames(mynoisydists)#
+                mynoisydists <- as.dist(mynoisydists, upper=FALSE)#
+                # Now split these three coins into two groups#
+                mycoingroups <- pam(mynoisydists,2)$clustering#
+                samegroup <- outer(mycoingroups, mycoingroups,FUN="==")#
+                alltries <- samegroup#
+                alltries[] <- TRUE#
+                # Update the two overall matrices for coin-pairs grouped together and for total coin-pair comparisons#
+                mcols <- match(colnames(samegroup),colnames(sameclusters))#
+                mrows <- match(rownames(samegroup),rownames(sameclusters))#
+                sameclusters[mrows,mcols] <- sameclusters[mrows,mcols] + samegroup#
+                totalcomps[mrows,mcols] <- totalcomps[mrows,mcols] + alltries#
+            }#
+        }#
+    }#
+}
+sameclusters
+f
+e
+f != e
+# Set up some matrices to store counts of the number of instances (a) when coin pairs are assigned the same group, and (b) total number of comparisons of that coin pair.#
+sameclusters <- coindistsdf#
+sameclusters[] <- 0#
+totalcomps <- sameclusters#
+#
+# We wish to compare each coin in the dataset to each other one a certain number of times, with a third random coin as part of the comparison. For example, let start with, say, 10 comparison draws per pair of coins. In this case, it would therefore involve 99 * 98 * 10 = 97020 comparisons):#
+drawspercoinpair <- 10#
+# Create a list for the different draws, but as per below, we will get two draws per list item, so#
+smpls <- vector("list", drawspercoinpair/2)#
+#
+# For each list item create a pairwise matrix and assign a random third coin at each matrix node (with NA diagnoal). Hence each matrix holds two random draws per coin pair (upper and lower triangle).#
+for (i in 1: length(smpls)){#
+    # Clearly all the for loops are not optimal...#
+    threecomp <- totalcomps#
+    threecomp[] <- NA#
+    for (a in 1:nrow(threecomp)){#
+        for (b in 1:ncol(threecomp)){#
+            if (b != a){#
+                focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+                othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+                threecomp[a,b] <- othercoins[sample(1:length(othercoins), 1)]#
+            }#
+        }#
+    }#
+    smpls[[i]] <- threecomp#
+}#
+# So, in this example, an initial sweep through the data to reconstruct a distance matrix would make ten comparisons per coin pair and keep track of the results. For example (again, loops not optimal but for clarity):#
+#
+for (d in 1:length(smpls)){#
+    mysamples <- smpls[[d]]#
+    for (e in 1:nrow(mysamples)){#
+        coin1 <- rownames(mysamples)[e]#
+        for (f in 1:ncol(mysamples)){#
+            if (f != e){#
+                coin2 <- colnames(mysamples)[f]#
+                coin3 <- mysamples[e,f]#
+                mycoins <- c(coin1,coin2,coin3) #
+                # Extract the relevant section of the overall distance matrix#
+                mycoindists <- coindistsdf[mycoins,mycoins]#
+#
+                #Assume any crowd-sourcing contributor would imperfectly judge the similarity of the coins.#
+                #So add some noise relative to the variability in distance values in the real coin distance matrix,#
+                #for example:#
+                noise <- 0.3 * (max(coindists) - min(coindists))#
+                # Then jitter the small distance matrix for the three coins accordingly.#
+                mynoisydists <- as.data.frame(sapply(mycoindists, jitter, amount=noise))#
+                rownames(mynoisydists) <- colnames(mynoisydists)#
+                mynoisydists <- as.dist(mynoisydists, upper=FALSE)#
+                # Now split these three coins into two groups#
+                mycoingroups <- pam(mynoisydists,2)$clustering#
+                samegroup <- outer(mycoingroups, mycoingroups,FUN="==")#
+                alltries <- samegroup#
+                alltries[] <- TRUE#
+                # Update the two overall matrices for coin-pairs grouped together and for total coin-pair comparisons#
+                mcols <- match(colnames(samegroup),colnames(sameclusters))#
+                mrows <- match(rownames(samegroup),rownames(sameclusters))#
+                sameclusters[mrows,mcols] <- sameclusters[mrows,mcols] + samegroup#
+                totalcomps[mrows,mcols] <- totalcomps[mrows,mcols] + alltries#
+            }#
+        }#
+    }#
+}
+sameclusters
+totalcomps
+sameclusters
+coindistrecon <- coinssameclusters / coinstotalcomps#
+coindistrecon <- 1 - coindistrecon
+distrecon <- sameclusters / totalcomps#
+distrecon <- 1 - distrecon
+distrecon
+as.dist(distrecon, lower.tri=TRUE, diagonal=FALSE)
+?as.dist
+distrecon <- as.dist(distrecon, diag=FALSE, upper=FALSE)
+coindists
+odendro <- hclust(coindists, method="average")#
+rdendro <- hclust(distrecon, method="average")
+plot(odendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Data", cex=0.5)
+par(mfrow=c(1,2))#
+plot(odendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Data", cex=0.5)#
+plot(rdendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Data", cex=0.5)
+dev.new(device=pdf, width=8, height=5)#
+par(mfrow=c(1,2))#
+plot(odendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Data", cex=0.5)#
+plot(rdendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Data", cex=0.5)
+dev.new(device=pdf, width=10, height=7)#
+par(mfrow=c(1,2))#
+plot(odendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Data", cex=0.5)#
+plot(rdendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Data", cex=0.5)
+?par
+dev.new(device=pdf, width=10, height=7)#
+par(mfrow=c(1,2))#
+par(mar=c(0, 0, 4, 0))#
+plot(odendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Data", cex=0.5)#
+plot(rdendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Data", cex=0.5)#
+par(mar=c(5, 4, 4, 2) + 0.1)
+quit("no")
+library(ape)#
+library(cluster)#
+#
+#############################
+#
+## Simulated Coin Dataset and Coin Distance Matrix ###
+#
+# As an example, create a colaescent tree of 99 coins (with 49 extinct 'nodes' and 50 'tips').#
+set.seed(10)#
+cointree <- rcoal(50, br=runif)#
+# Not yet sure why node labels won't plot#
+plot(cointree, show.tip.label=TRUE, show.node.label=TRUE, cex=0.5)#
+#  Brownian motion to simulate the evolution of 5 continuous, uncorrelated traits according to the above tree#
+cointraits <- replicate(5, rTraitCont(cointree, ancestor=TRUE))#
+# Calculate a Euclidean distance matrix#
+coindists <- dist(cointraits, method="euclidean")#
+coindistsdf <- as.data.frame(as.matrix(coindists))#
+#
+#############################
+#
+## Crowd-sourced Distance Matrix via Splitting of Three Coin Sets ###
+#
+# Set up some matrices to store counts of the number of instances (a) when coin pairs are assigned the same group, and (b) total number of comparisons of that coin pair.#
+sameclusters <- coindistsdf#
+sameclusters[] <- 0#
+totalcomps <- sameclusters#
+#
+# We wish to compare each coin in the dataset to each other one a certain number of times, with a third random coin as part of the comparison. For example, let start with, say, 4 comparison draws per pair of coins. In this case, it would therefore involve 99 * 98 * 10 = 97020 comparisons):#
+drawspercoinpair <- 4#
+# Create a list for the different draws, but as per below, we will get two draws per list item, so#
+smpls <- vector("list", drawspercoinpair/2)#
+#
+# For each list item create a pairwise matrix and assign a random third coin at each matrix node (with NA diagnoal). Hence each matrix holds two random draws per coin pair (upper and lower triangle).#
+for (i in 1: length(smpls)){#
+    # Clearly all the for loops are not optimal...#
+    threecomp <- totalcomps#
+    threecomp[] <- NA#
+    for (a in 1:nrow(threecomp)){#
+        for (b in 1:ncol(threecomp)){#
+            if (b != a){#
+                focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+                othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+                threecomp[a,b] <- othercoins[sample(1:length(othercoins), 1)]#
+            }#
+        }#
+    }#
+    smpls[[i]] <- threecomp#
+}#
+#
+# So, in this example, an initial sweep through the data to reconstruct a distance matrix would make ten slightly different comparisons per coin pair and keep track of the results. Each coin pair set is hypothetically 'crowdsourced' 10 times (taskredundancy) with a certain amount of 'noise' meant to model contributors uncertainty in assessing coin similarity. For example (again, loops not optimal but for clarity):
+quit("no")
+library(ape)#
+library(cluster)#
+#
+#############################
+#
+## Simulated Coin Dataset and Coin Distance Matrix ###
+#
+# As an example, create a colaescent tree of 99 coins (with 49 extinct 'nodes' and 50 'tips').#
+set.seed(10)#
+cointree <- rcoal(50, br=runif)#
+# Not yet sure why node labels won't plot#
+plot(cointree, show.tip.label=TRUE, show.node.label=TRUE, cex=0.5)#
+#  Brownian motion to simulate the evolution of 5 continuous, uncorrelated traits according to the above tree#
+cointraits <- replicate(5, rTraitCont(cointree, ancestor=TRUE))#
+# Calculate a Euclidean distance matrix#
+coindists <- dist(cointraits, method="euclidean")#
+coindistsdf <- as.data.frame(as.matrix(coindists))#
+#
+#############################
+#
+## Crowd-sourced Distance Matrix via Splitting of Three Coin Sets ###
+#
+# Set up some matrices to store counts of the number of instances (a) when coin pairs are assigned the same group, and (b) total number of comparisons of that coin pair.#
+sameclusters <- coindistsdf#
+sameclusters[] <- 0#
+totalcomps <- sameclusters#
+#
+# We wish to compare each coin in the dataset to each other one a certain number of times, with a third random coin as part of the comparison. For example, let start with, say, 4 comparison draws per pair of coins. In this case, it would therefore involve 99 * 98 * 10 = 97020 comparisons):#
+drawspercoinpair <- 4#
+# Create a list for the different draws, but as per below, we will get two draws per list item, so#
+smpls <- vector("list", drawspercoinpair/2)#
+#
+# For each list item create a pairwise matrix and assign a random third coin at each matrix node (with NA diagnoal). Hence each matrix holds two random draws per coin pair (upper and lower triangle).#
+for (i in 1: length(smpls)){#
+    # Clearly all the for loops are not optimal...#
+    threecomp <- totalcomps#
+    threecomp[] <- NA#
+    for (a in 1:nrow(threecomp)){#
+        for (b in 1:ncol(threecomp)){#
+            if (b != a){#
+                focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+                othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+                threecomp[a,b] <- othercoins[sample(1:length(othercoins), 1)]#
+            }#
+        }#
+    }#
+    smpls[[i]] <- threecomp#
+}#
+#
+# So, in this example, we try to reconstruct the original distance matrix by making 4 slightly different comparisons per coin pair and keeping track of the results. Each coin pair set is also hypothetically 'crowdsourced' 10 times (taskredundancy) with a certain amount of 'noise' which is meant to model contributors uncertainty in assessing coin similarity. For example (again, loops not optimal but for clarity):#
+#
+taskredundancy <- 10#
+crowdnoise <- 0.3 * (max(coindists) - min(coindists))#
+#
+for (d in 1:length(smpls)){#
+    mysamples <- smpls[[d]]#
+    for (e in 1:nrow(mysamples)){#
+        coin1 <- rownames(mysamples)[e]#
+        for (f in 1:ncol(mysamples)){#
+            if (f != e){#
+                coin2 <- colnames(mysamples)[f]#
+                coin3 <- mysamples[e,f]#
+                mycoins <- c(coin1,coin2,coin3)             #
+                # Extract the relevant section of the overall distance matrix#
+                mycoindists <- coindistsdf[mycoins,mycoins]#
+#
+                for (g in 1:taskredundancy){#
+                    # Each crowd-sourcing contributor assesses the three coin group slightly differently.#
+                    # Hence, jitter the small distance matrix for the three coins accordingly.#
+                    mynoisydists <- as.data.frame(sapply(mycoindists, jitter, amount=crowdnoise))#
+                    rownames(mynoisydists) <- colnames(mynoisydists)#
+                    mynoisydists <- as.dist(mynoisydists, upper=FALSE)#
+                    # Now split these three coins into two groups#
+                    mycoingroups <- pam(mynoisydists,2)$clustering#
+                    samegroup <- outer(mycoingroups, mycoingroups,FUN="==")#
+                    alltries <- samegroup#
+                    alltries[] <- TRUE#
+                    # Update the two overall matrices for coin-pairs grouped together and for total coin-pair comparisons#
+                    mcols <- match(colnames(samegroup),colnames(sameclusters))#
+                    mrows <- match(rownames(samegroup),rownames(sameclusters))#
+                    sameclusters[mrows,mcols] <- sameclusters[mrows,mcols] + samegroup#
+                    totalcomps[mrows,mcols] <- totalcomps[mrows,mcols] + alltries#
+                }#
+            }#
+        }#
+    }#
+}
+totalcomps
+samegroup
+samegroups
+sameclusters
+# At the end of this process, we computer a statistic: 1-a/b, where a ist the number of clusterings in which both coins are in the same cluster, and b is the number of draws for clustering in which both coins were involved.#
+distrecon <- sameclusters / totalcomps#
+distrecon <- 1 - distrecon#
+distrecon <- as.dist(distrecon, diag=FALSE, upper=FALSE)#
+#
+# Plot dendrograms of original distance matrix and reconstructed one.#
+odendro <- hclust(coindists, method="average")#
+rdendro <- hclust(distrecon, method="average")#
+dev.new(device=pdf, width=10, height=7)#
+par(mfrow=c(1,2))#
+par(mar=c(0, 0, 4, 0))#
+plot(odendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Data", cex=0.5)#
+plot(rdendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Data", cex=0.5)#
+par(mar=c(5, 4, 4, 2) + 0.1)
+dev.new(device=pdf, width=10, height=7)#
+par(mfrow=c(1,2))#
+par(mar=c(0, 0, 4, 0))#
+plot(odendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Data", cex=0.3)#
+plot(rdendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Data", cex=0.3)#
+par(mar=c(5, 4, 4, 2) + 0.1)
+99 * 98 * 4
+coindists
+mean(coindists)
+sd(coindists)
+0.2 * (max(coindists) - min(coindists))
+99 * 98 * 4 * 5
+samegroup
+mycoingroups
+lower.tri(samegroup)
+samegroup[lower.tri(samegroup)]
+99 * 98 * 2
+quit("no")
+library(ape)#
+library(cluster)#
+#
+#############################
+#
+## Simulated Coin Dataset and Coin Distance Matrix ###
+#
+# As an example, create a colaescent tree of 99 coins (with 49 extinct 'nodes' and 50 'tips').#
+set.seed(10)#
+cointree <- rcoal(50, br=runif)#
+# Not yet sure why node labels won't plot#
+plot(cointree, show.tip.label=TRUE, show.node.label=TRUE, cex=0.5)#
+#  Brownian motion to simulate the evolution of 5 continuous, uncorrelated traits according to the above tree#
+cointraits <- replicate(5, rTraitCont(cointree, ancestor=TRUE))#
+# Calculate a Euclidean distance matrix#
+coindists <- dist(cointraits, method="euclidean")#
+coindistsdf <- as.data.frame(as.matrix(coindists))#
+#
+#############################
+#
+## Crowd-sourced Distance Matrix via Splitting of Three Coin Sets ###
+#
+# Set up some matrices to store counts of the number of instances (a) when coin pairs are assigned the same group, and (b) total number of comparisons of that coin pair.#
+sameclusters <- coindistsdf#
+sameclusters[] <- 0#
+totalcomps <- sameclusters#
+#
+# We wish to compare each coin in the dataset to each other one a certain number of times, with a third random coin as part of the comparison. For example, we ensure a certain number of comparison draws for every pair of coins. For example, if we wish to esnure at least two draws per pair, it would  involve 99 * 98 * 2 comparison sets of three coins each):#
+drawspercoinpair <- 2#
+# Create a list for the different draws, but as per below, we will get two draws per list item, so:#
+smpls <- vector("list", drawspercoinpair/2)#
+#
+# In each list item, store a pairwise matrix and assign a random third coin at each matrix node. Each pairwise coin matrix will enable 2 random draws per coin pair (one in the upper and one in the lower triangle).#
+for (i in 1: length(smpls)){#
+    # (The multiple for-loops are not optimal)#
+    threecomp <- totalcomps#
+    threecomp[] <- NA#
+    for (a in 1:nrow(threecomp)){#
+        for (b in 1:ncol(threecomp)){#
+            if (b != a){#
+                focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+                othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+                threecomp[a,b] <- othercoins[sample(1:length(othercoins), 1)] #third coin#
+            }#
+        }#
+    }#
+    smpls[[i]] <- threecomp#
+}#
+#
+# We try to reconstruct the original distance matrix by making comparisons per coin pair and keeping track of the results. In this example, each coin pair is compared 4 times with a different third coin each time. Each three-coin comparison set is also hypothetically 'crowdsourced' a certain number of times (taskredundancy) with a certain amount of 'noise' (meant to model contributors uncertainty in assessing coin similarity). So the total number of assessments is 99 * 98 * 4 * 5 = 194040.#
+#
+#For example#
+taskredundancy <- 5#
+crowdnoise <- 1 * sd(coindists)#
+#
+# We will crowdsourcing each comparison and counting up how many times each contributor, faced wiht the same comparison set groups certain coins together. In addition to the guaranteed pairs (as above), the third coin will ensure certain pairs get compared extra times (at random), so we should also keep track of total number of comparisons per pair. We can do this in lists identical to smpls.#
+pairgrouped <- smpls#
+totalpairtrys <- smpls
+mypairgrouped <- mysamples
+d=1
+mysamples <- smpls[[d]]#
+    mypairgrouped <- mysamples#
+    mypairtrys <- mysamples
+mypairtrys
+mypairgrouped[] <- 0
+mypairgrouped
+mypairtrys <- mypairgrouped[]
+mypairtrys
+quit("no")
+# As an example, create a colaescent tree of 99 coins (with 49 extinct 'nodes' and 50 'tips').#
+set.seed(101)#
+cointree <- rcoal(50, br=runif)#
+# Not yet sure why node labels won't plot#
+plot(cointree, show.tip.label=TRUE, show.node.label=TRUE, cex=0.5)#
+#  Brownian motion to simulate the evolution of 5 continuous, uncorrelated traits according to the above tree#
+cointraits <- replicate(5, rTraitCont(cointree, ancestor=TRUE))#
+# Calculate a Euclidean distance matrix#
+coindists <- dist(cointraits, method="euclidean")#
+coindistsdf <- as.data.frame(as.matrix(coindists))
+quit("no")
+library(ape)#
+library(cluster)#
+#
+#############################
+#
+## Simulated Coin Dataset and Coin Distance Matrix ###
+#
+# As an example, create a colaescent tree of 99 coins (with 49 extinct 'nodes' and 50 'tips').#
+set.seed(101)#
+cointree <- rcoal(50, br=runif)#
+# Not yet sure why node labels won't plot#
+plot(cointree, show.tip.label=TRUE, show.node.label=TRUE, cex=0.5)#
+#  Brownian motion to simulate the evolution of 5 continuous, uncorrelated traits according to the above tree#
+cointraits <- replicate(5, rTraitCont(cointree, ancestor=TRUE))#
+# Calculate a Euclidean distance matrix#
+coindists <- dist(cointraits, method="euclidean")#
+coindistsdf <- as.data.frame(as.matrix(coindists))
+str(cointree)
+str(cointree$Nnode
+cointree$Nnode
+?rcoal
+?br
+coindistsdf
+plot(cointree, show.tip.label=TRUE, show.node.label=TRUE, cex=0.5)#
+nodelabels(paste("Node",1:cointree$Nnode,sep=""), 1:cointree$Nnode)
+? nodelabels
+?rTraitCont
+cointraits
+plot(cointraits)
+dd<-rTraitCont(cointree, ancestor=TRUE)
+plot(dd)
+?rTraitCont
+data(bird.orders)#
+rTraitCont(bird.orders) # BM with sigma = 0.1#
+### OU model with two optima:#
+tr <- reorder(bird.orders, "postorder")
+bar <- function(x, l) x + rpois(1, l)#
+(x <- rTraitCont(tr, bar, ancestor = TRUE))
+plot(tr, show.tip.label = FALSE)#
+Y <- x[1:20]#
+A <- x[-(1:20)]#
+nodelabels(A)#
+tiplabels(Y)
+dd[1,]
+dd[1]
+plot(cointree)
+tiplables(dd[1])
+plot(cointree)
+tiplabels(dd[1])
+quit("no")
+library(ape)#
+library(cluster)#
+#
+#############################
+#
+## Simulated Coin Dataset and Coin Distance Matrix ###
+#
+# As an example, create a colaescent tree of 99 coins (with 49 extinct 'nodes' and 50 'tips').#
+set.seed(101)#
+cointree <- rcoal(50, br=runif)#
+# Not yet sure why node labels won't plot#
+#plot(cointree, show.tip.label=TRUE, show.node.label=TRUE, cex=0.5)#
+#  Brownian motion to simulate the evolution of 5 continuous, uncorrelated traits according to the above tree#
+cointraits <- replicate(5, rTraitCont(cointree, ancestor=TRUE))#
+# Calculate a Euclidean distance matrix#
+coindists <- dist(cointraits, method="euclidean")#
+coindistsdf <- as.data.frame(as.matrix(coindists))#
+#
+#############################
+#
+## Crowd-sourced Distance Matrix via Splitting of Three Coin Sets ###
+#
+# Set up some matrices to store counts of the number of instances (a) when coin pairs are assigned the same group, and (b) total number of comparisons of that coin pair.#
+sameclusters <- coindistsdf#
+sameclusters[] <- 0#
+totalcomps <- sameclusters#
+#
+# We wish to compare each coin in the dataset to each other one a certain number of times, with a third random coin as part of the comparison. For example, we ensure a certain number of comparison draws for every pair of coins. For example, if we wish to esnure at least two draws per pair, it would  involve 99 * 98 * 2 comparison sets of three coins each):#
+drawspercoinpair <- 2#
+# Create a list for the different draws, but as per below, we will get two draws per list item, so:#
+smpls <- vector("list", drawspercoinpair/2)#
+#
+# In each list item, store a pairwise matrix and assign a random third coin at each matrix node. Each pairwise coin matrix will enable 2 random draws per coin pair (one in the upper and one in the lower triangle).#
+for (i in 1: length(smpls)){#
+    # (The multiple for-loops are not optimal)#
+    threecomp <- totalcomps#
+    threecomp[] <- NA#
+    for (a in 1:nrow(threecomp)){#
+        for (b in 1:ncol(threecomp)){#
+            if (b != a){#
+                focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+                othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+                threecomp[a,b] <- othercoins[sample(1:length(othercoins), 1)] #third coin#
+            }#
+        }#
+    }#
+    smpls[[i]] <- threecomp#
+}
+# We try to reconstruct the original distance matrix by making comparisons per coin pair and keeping track of the results. In this example, each coin pair is compared 4 times with a different third coin each time. Each three-coin comparison set is also hypothetically 'crowdsourced' a certain number of times (taskredundancy) with a certain amount of 'noise' (meant to model contributors uncertainty in assessing coin similarity). So the total number of assessments is 99 * 98 * 4 * 5 = 194040.#
+#
+#For example#
+taskredundancy <- 5#
+crowdnoise <- 1 * sd(coindists)#
+#
+# We will crowdsourcing each comparison and counting up how many times each contributor, faced wiht the same comparison set groups certain coins together. In addition to the guaranteed pairs (as above), the third coin will ensure certain pairs get compared extra times (at random), so we should also keep track of total number of comparisons per pair. We can do this in lists identical to smpls.#
+pairgrouped <- smpls#
+totalpairtrys <- smpls
+# Now loop through the samples and do the comparisons#
+for (d in 1:length(smpls)){#
+    # (Again, the multiple for-loops are not optimal)#
+    mysamples <- smpls[[d]]#
+    mypairgrouped <- mysamples#
+    mypairgrouped[] <- 0#
+    mypairtrys <- mypairgrouped#
+    for (e in 1:nrow(mysamples)){#
+        coin1 <- rownames(mysamples)[e]#
+        for (f in 1:ncol(mysamples)){#
+            if (f != e){#
+                coin2 <- colnames(mysamples)[f]#
+                coin3 <- mysamples[e,f]#
+                mycoins <- c(coin1,coin2,coin3)             #
+                # Extract the relevant section of the overall distance matrix#
+                mycoindists <- coindistsdf[mycoins,mycoins]#
+#
+                for (g in 1:taskredundancy){#
+                    # Each crowd-sourcing contributor assesses the three coin group slightly differently.#
+                    # Hence, jitter the small distance matrix for the three coins accordingly.#
+                    mynoisydists <- as.data.frame(sapply(mycoindists, jitter, amount=crowdnoise))#
+                    rownames(mynoisydists) <- colnames(mynoisydists)#
+                    mynoisydists <- as.dist(mynoisydists, upper=FALSE)#
+                    # Now split these three coins into two groups#
+                    mycoingroups <- pam(mynoisydists,2)$clustering#
+                    samegroup <- outer(mycoingroups, mycoingroups,FUN="==")#
+                    alltries <- samegroup#
+                    alltries[] <- TRUE#
+                    # Update the two overall matrices for coin-pairs grouped together and for total coin-pair comparisons#
+                    mcols <- match(colnames(samegroup),colnames(mypairgrouped))#
+                    mrows <- match(rownames(samegroup),rownames(mypairgrouped))#
+                    sameclusters[mrows,mcols] <- mypairgrouped[mrows,mcols] + samegroup#
+                    mypairtrys[mrows,mcols] <- mypairtrys[mrows,mcols] + alltries#
+                }#
+            }#
+        }#
+    }#
+    pairgrouped[[d]] <- sameclusters#
+    totalpairtrys[[d]] <- mypairtrys#
+}
+pairgrouped[[1]]
+smpls
+sameclusters
+mypairtrys
+mypairtrys[upper.tri(mypairtrys)] <- NA
+mypairtrys
+mypairtrys[upper.tri(mypairtrys, diag=TRUE)] <- NA
+mypairtrys
+dd <- as.dist(mypairtrys, diag=FALSE, upper=FALSE)
+dd
+dd+dd
+samegroup
+ee<- as.dist(samegroup, diag=FALSE, upper=FALSE)
+ee
+mypairedgroup
+mypairgrouped
+dd <- as.dist(mypairgrouped, diag=FALSE, upper=FALSE)
+dd
+mcols <- match(colnames(ee),colnames(dd))
+mcols
+ee
+colnames(ee)
+names(ee)
+rownames(ee)
+dim(ee)
+?dist
+dist$Labels
+Labels(ee)
+ee$Labels
+ee@Labels
+str(dist)
+str(ee)
+ee["Labels"]
+Labels(ee)
+labels(ee)
+mcols <- match(labels(ee),labels(dd))
+mcols
+dd[,mcols]
+dd[mcols]
+dd[mcols] <- 5
+dd
+ee
+eethreecomp
+threecomp
+as.distsameclusters
+sameclusters
+quit("no")
+library(ape)#
+library(cluster)#
+#
+#############################
+#
+## Simulated Coin Dataset and Coin Distance Matrix ###
+#
+# As an example, create a colaescent tree of 99 coins (with 49 extinct 'nodes' and 50 'tips').#
+set.seed(101)#
+cointree <- rcoal(50, br=runif)#
+# Not yet sure why node labels won't plot#
+#plot(cointree, show.tip.label=TRUE, show.node.label=TRUE, cex=0.5)#
+#  Brownian motion to simulate the evolution of 5 continuous, uncorrelated traits according to the above tree#
+cointraits <- replicate(5, rTraitCont(cointree, ancestor=TRUE))#
+# Calculate a Euclidean distance matrix#
+coindists <- dist(cointraits, method="euclidean")#
+coindistsdf <- as.data.frame(as.matrix(coindists))#
+#
+#############################
+#
+## Crowd-sourced Distance Matrix via Splitting of Three Coin Sets ###
+#
+# Set up some matrices to store counts of the number of instances (a) when coin pairs are assigned the same group, and (b) total number of comparisons of that coin pair.#
+sameclusters <- coindistsdf#
+sameclusters[] <- 0#
+totalcomps <- sameclusters#
+#
+# We wish to compare each coin in the dataset to each other one a certain number of times, with a third random coin as part of the comparison. For example, we ensure a certain number of comparison draws for every pair of coins. For example, if we wish to esnure at least two draws per pair, it would  involve 99 * 98 * 2 comparison sets of three coins each):#
+drawspercoinpair <- 2#
+# Create a list for the different draws, but as per below, we will get two draws per list item, so:#
+smpls <- vector("list", drawspercoinpair/2)#
+#
+# In each list item, store a pairwise matrix and assign a random third coin at each matrix node. Each pairwise coin matrix will enable 2 random draws per coin pair (one in the upper and one in the lower triangle).#
+for (i in 1: length(smpls)){#
+    # (The multiple for-loops are not optimal)#
+    threecomp <- totalcomps#
+    threecomp[] <- NA#
+    for (a in 1:nrow(threecomp)){#
+        for (b in 1:ncol(threecomp)){#
+            if (b != a){#
+                focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+                othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+                threecomp[a,b] <- othercoins[sample(1:length(othercoins), 1)] #third coin#
+            }#
+        }#
+    }#
+    smpls[[i]] <- threecomp#
+}#
+#
+# We try to reconstruct the original distance matrix by making comparisons per coin pair and keeping track of the results. In this example, each coin pair is compared 4 times with a different third coin each time. Each three-coin comparison set is also hypothetically 'crowdsourced' a certain number of times (taskredundancy) with a certain amount of 'noise' (meant to model contributors uncertainty in assessing coin similarity). So the total number of assessments is 99 * 98 * 4 * 5 = 194040.#
+#
+#For example#
+taskredundancy <- 5#
+crowdnoise <- 1 * sd(coindists)#
+#
+# We will crowdsourcing each comparison and counting up how many times each contributor, faced wiht the same comparison set groups certain coins together. In addition to the guaranteed pairs (as above), the third coin will ensure certain pairs get compared extra times (at random), so we should also keep track of total number of comparisons per pair. We can do this in lists identical to smpls.
+# Now loop through the samples and do the comparisons#
+for (d in 1:length(smpls)){#
+    mysamples <- smpls[[d]]#
+    for (e in 1:nrow(mysamples)){#
+        coin1 <- rownames(mysamples)[e]#
+        for (f in 1:ncol(mysamples)){#
+            if (f != e){#
+                coin2 <- colnames(mysamples)[f]#
+                coin3 <- mysamples[e,f]#
+                mycoins <- c(coin1,coin2,coin3)             #
+                # Extract the relevant section of the overall distance matrix#
+                mycoindists <- coindistsdf[mycoins,mycoins]#
+#
+                for (g in 1:taskredundancy){#
+                    # Each crowd-sourcing contributor assesses the three coin group slightly differently.#
+                    # Hence, jitter the small distance matrix for the three coins accordingly.#
+                    mynoisydists <- as.data.frame(sapply(mycoindists, jitter, amount=crowdnoise))#
+                    rownames(mynoisydists) <- colnames(mynoisydists)#
+                    mynoisydists <- as.dist(mynoisydists, upper=FALSE)#
+                    # Now split these three coins into two groups#
+                    mycoingroups <- pam(mynoisydists,2)$clustering#
+                    samegroup <- outer(mycoingroups, mycoingroups,FUN="==")#
+                    alltries <- samegroup#
+                    alltries[] <- TRUE#
+                    # Update the two overall matrices for coin-pairs grouped together and for total coin-pair comparisons#
+                    mcols <- match(colnames(samegroup),colnames(sameclusters))#
+                    mrows <- match(rownames(samegroup),rownames(sameclusters))#
+                    sameclusters[mrows,mcols] <- sameclusters[mrows,mcols] + samegroup#
+                    totalcomps[mrows,mcols] <- totalcomps[mrows,mcols] + alltries#
+                }#
+            }#
+        }#
+    }#
+}
+# Then compute a statistic: 1-a/b, where a is the number of clusterings in which both coins are in the same cluster, and b is the number of draws for clustering in which both coins were involved.#
+distrecon <- sameclusters / totalcomps#
+distrecon <- 1 - distrecon#
+distrecon <- as.dist(distrecon, diag=FALSE, upper=FALSE)
+# Plot dendrograms after clustering the original distance matrix and the reconstructed one.#
+odendro <- hclust(coindists, method="average")#
+rdendro <- hclust(distrecon, method="average")#
+dev.new(device=pdf, width=10, height=7)#
+par(mfrow=c(1,2))#
+par(mar=c(0, 0, 4, 0))#
+plot(odendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Clusters", cex=0.3)#
+plot(rdendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Reconstructed Clusters", cex=0.3)#
+par(mar=c(5, 4, 4, 2) + 0.1)
+totalcomps
+samegroup
+# Now loop through the samples and do the comparisons#
+for (d in 1:length(smpls)){#
+    mysamples <- smpls[[d]]#
+    for (e in 1:nrow(mysamples)){#
+        coin1 <- rownames(mysamples)[e]#
+        for (f in 1:ncol(mysamples)){#
+            if (f != e){#
+                coin2 <- colnames(mysamples)[f]#
+                coin3 <- mysamples[e,f]#
+                mycoins <- c(coin1,coin2,coin3)             #
+                # Extract the relevant section of the overall distance matrix#
+                mycoindists <- coindistsdf[mycoins,mycoins]#
+#
+                for (g in 1:taskredundancy){#
+                    # Each crowd-sourcing contributor assesses the three coin group slightly differently.#
+                    # Hence, jitter the small distance matrix for the three coins accordingly.#
+                    mynoisydists <- as.data.frame(sapply(mycoindists, jitter, amount=crowdnoise))#
+                    rownames(mynoisydists) <- colnames(mynoisydists)#
+                    mynoisydists <- as.dist(mynoisydists, upper=FALSE)#
+                    # Now split these three coins into two groups#
+                    mycoingroups <- pam(mynoisydists,2)$clustering#
+                    samegroup <- outer(mycoingroups, mycoingroups,FUN="==")#
+                    if (e==1 & f==2){ print(samegroup)#
+                    alltries <- samegroup#
+                    alltries[] <- TRUE#
+                    # Update the two overall matrices for coin-pairs grouped together and for total coin-pair comparisons#
+                    mcols <- match(colnames(samegroup),colnames(sameclusters))#
+                    mrows <- match(rownames(samegroup),rownames(sameclusters))#
+                    sameclusters[mrows,mcols] <- sameclusters[mrows,mcols] + samegroup#
+                    totalcomps[mrows,mcols] <- totalcomps[mrows,mcols] + alltries#
+                }#
+            }#
+        }#
+    }#
+}
+# Now loop through the samples and do the comparisons#
+for (d in 1:length(smpls)){#
+    mysamples <- smpls[[d]]#
+    for (e in 1:nrow(mysamples)){#
+        coin1 <- rownames(mysamples)[e]#
+        for (f in 1:ncol(mysamples)){#
+            if (f != e){#
+                coin2 <- colnames(mysamples)[f]#
+                coin3 <- mysamples[e,f]#
+                mycoins <- c(coin1,coin2,coin3)             #
+                # Extract the relevant section of the overall distance matrix#
+                mycoindists <- coindistsdf[mycoins,mycoins]#
+#
+                for (g in 1:taskredundancy){#
+                    # Each crowd-sourcing contributor assesses the three coin group slightly differently.#
+                    # Hence, jitter the small distance matrix for the three coins accordingly.#
+                    mynoisydists <- as.data.frame(sapply(mycoindists, jitter, amount=crowdnoise))#
+                    rownames(mynoisydists) <- colnames(mynoisydists)#
+                    mynoisydists <- as.dist(mynoisydists, upper=FALSE)#
+                    # Now split these three coins into two groups#
+                    mycoingroups <- pam(mynoisydists,2)$clustering#
+                    samegroup <- outer(mycoingroups, mycoingroups,FUN="==")#
+                    if (e==1 & f==2){ print(samegroup) }#
+                    alltries <- samegroup#
+                    alltries[] <- TRUE#
+                    # Update the two overall matrices for coin-pairs grouped together and for total coin-pair comparisons#
+                    mcols <- match(colnames(samegroup),colnames(sameclusters))#
+                    mrows <- match(rownames(samegroup),rownames(sameclusters))#
+                    sameclusters[mrows,mcols] <- sameclusters[mrows,mcols] + samegroup#
+                    totalcomps[mrows,mcols] <- totalcomps[mrows,mcols] + alltries#
+                }#
+            }#
+        }#
+    }#
+}
+totalcomps
+# Set up some matrices to store counts of the number of instances (a) when coin pairs are assigned the same group, and (b) total number of comparisons of that coin pair.#
+sameclusters <- coindistsdf#
+sameclusters[] <- 0#
+totalcomps <- sameclusters#
+#
+# We wish to compare each coin in the dataset to each other one a certain number of times, with a third random coin as part of the comparison. For example, we ensure a certain number of comparison draws for every pair of coins. For example, if we wish to esnure at least two draws per pair, it would  involve 99 * 98 * 2 comparison sets of three coins each):#
+drawspercoinpair <- 2#
+# Create a list for the different draws, but as per below, we will get two draws per list item, so:#
+smpls <- vector("list", drawspercoinpair/2)#
+#
+# In each list item, store a pairwise matrix and assign a random third coin at each matrix node. Each pairwise coin matrix will enable 2 random draws per coin pair (one in the upper and one in the lower triangle).#
+for (i in 1: length(smpls)){#
+    # (The multiple for-loops are not optimal)#
+    threecomp <- totalcomps#
+    threecomp[] <- NA#
+    for (a in 1:nrow(threecomp)){#
+        for (b in 1:ncol(threecomp)){#
+            if (b != a){#
+                focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+                othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+                threecomp[a,b] <- othercoins[sample(1:length(othercoins), 1)] #third coin#
+            }#
+        }#
+    }#
+    smpls[[i]] <- threecomp#
+}#
+#
+# We try to reconstruct the original distance matrix by making comparisons per coin pair and keeping track of the results. In this example, each coin pair is compared 4 times with a different third coin each time. Each three-coin comparison set is also hypothetically 'crowdsourced' a certain number of times (taskredundancy) with a certain amount of 'noise' (meant to model contributors uncertainty in assessing coin similarity). So the total number of assessments is 99 * 98 * 4 * 5 = 194040.#
+#
+#For example#
+taskredundancy <- 5#
+crowdnoise <- 1 * sd(coindists)#
+#
+# We will crowdsourcing each comparison and counting up how many times each contributor, faced wiht the same comparison set groups certain coins together. In addition to the guaranteed pairs (as above), the third coin will ensure certain pairs get compared extra times (at random), so we should also keep track of total number of comparisons per pair. We can do this in lists identical to smpls.#
+#
+# Now loop through the samples and do the comparisons#
+for (d in 1:length(smpls)){#
+    mysamples <- smpls[[d]]#
+    for (e in 1:nrow(mysamples)){#
+        coin1 <- rownames(mysamples)[e]#
+        for (f in 1:ncol(mysamples)){#
+            if (f != e){#
+                coin2 <- colnames(mysamples)[f]#
+                coin3 <- mysamples[e,f]#
+                mycoins <- c(coin1,coin2,coin3)             #
+                # Extract the relevant section of the overall distance matrix#
+                mycoindists <- coindistsdf[mycoins,mycoins]#
+#
+                for (g in 1:taskredundancy){#
+                    # Each crowd-sourcing contributor assesses the three coin group slightly differently.#
+                    # Hence, jitter the small distance matrix for the three coins accordingly.#
+                    mynoisydists <- as.data.frame(sapply(mycoindists, jitter, amount=crowdnoise))#
+                    rownames(mynoisydists) <- colnames(mynoisydists)#
+                    mynoisydists <- as.dist(mynoisydists, upper=FALSE)#
+                    # Now split these three coins into two groups#
+                    mycoingroups <- pam(mynoisydists,2)$clustering#
+                    samegroup <- outer(mycoingroups, mycoingroups,FUN="==")#
+                    if (e==1 & f==2){ print(samegroup) }#
+                    alltries <- samegroup#
+                    alltries[] <- TRUE#
+                    # Update the two overall matrices for coin-pairs grouped together and for total coin-pair comparisons#
+                    mcols <- match(colnames(samegroup),colnames(sameclusters))#
+                    mrows <- match(rownames(samegroup),rownames(sameclusters))#
+                    sameclusters[mrows,mcols] <- sameclusters[mrows,mcols] + samegroup#
+                    totalcomps[mrows,mcols] <- totalcomps[mrows,mcols] + alltries#
+                }#
+            }#
+        }#
+    }#
+}
+# Then compute a statistic: 1-a/b, where a is the number of clusterings in which both coins are in the same cluster, and b is the number of draws for clustering in which both coins were involved.#
+distrecon <- sameclusters / totalcomps#
+distrecon <- 1 - distrecon#
+distrecon <- as.dist(distrecon, diag=FALSE, upper=FALSE)#
+#
+# Plot dendrograms after clustering the original distance matrix and the reconstructed one.#
+odendro <- hclust(coindists, method="average")#
+rdendro <- hclust(distrecon, method="average")#
+dev.new(device=pdf, width=10, height=7)#
+par(mfrow=c(1,2))#
+par(mar=c(0, 0, 4, 0))#
+plot(odendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Clusters", cex=0.3)#
+plot(rdendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Reconstructed Clusters", cex=0.3)#
+par(mar=c(5, 4, 4, 2) + 0.1)
+totalcomps
+totalcomps[1:5,1:5]
+# Set up some matrices to store counts of the number of instances (a) when coin pairs are assigned the same group, and (b) total number of comparisons of that coin pair.#
+sameclusters <- coindistsdf#
+sameclusters[] <- 0#
+totalcomps <- sameclusters#
+#
+# We wish to compare each coin in the dataset to each other one a certain number of times, with a third random coin as part of the comparison. For example, we ensure a certain number of comparison draws for every pair of coins. For example, if we wish to esnure at least two draws per pair, it would  involve 99 * 98 * 2 comparison sets of three coins each):#
+drawspercoinpair <- 2#
+# Create a list for the different draws, but as per below, we will get two draws per list item, so:#
+smpls <- vector("list", drawspercoinpair/2)#
+#
+# In each list item, store a pairwise matrix and assign a random third coin at each matrix node. Each pairwise coin matrix will enable 2 random draws per coin pair (one in the upper and one in the lower triangle).#
+for (i in 1: length(smpls)){#
+    # (The multiple for-loops are not optimal)#
+    threecomp <- totalcomps#
+    threecomp[] <- NA#
+    for (a in 1:nrow(threecomp)){#
+        for (b in 1:ncol(threecomp)){#
+            if (b != a){#
+                focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+                othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+                threecomp[a,b] <- othercoins[sample(1:length(othercoins), 1)] #third coin#
+            }#
+        }#
+    }#
+    smpls[[i]] <- threecomp#
+}#
+#
+# We try to reconstruct the original distance matrix by making comparisons per coin pair and keeping track of the results. In this example, each coin pair is compared 4 times with a different third coin each time. Each three-coin comparison set is also hypothetically 'crowdsourced' a certain number of times (taskredundancy) with a certain amount of 'noise' (meant to model contributors uncertainty in assessing coin similarity). So the total number of assessments is 99 * 98 * 4 * 5 = 194040.#
+#
+#For example#
+taskredundancy <- 5#
+crowdnoise <- 1 * sd(coindists)#
+#
+# We will crowdsourcing each comparison and counting up how many times each contributor, faced wiht the same comparison set groups certain coins together. In addition to the guaranteed pairs (as above), the third coin will ensure certain pairs get compared extra times (at random), so we should also keep track of total number of comparisons per pair. We can do this in lists identical to smpls.#
+#
+# Now loop through the samples and do the comparisons#
+for (d in 1:length(smpls)){#
+    mysamples <- smpls[[d]]#
+    for (e in 1:nrow(mysamples)){#
+        coin1 <- rownames(mysamples)[e]#
+        for (f in 1:ncol(mysamples)){#
+            if (f != e){#
+                coin2 <- colnames(mysamples)[f]#
+                coin3 <- mysamples[e,f]#
+                mycoins <- c(coin1,coin2,coin3)             #
+                # Extract the relevant section of the overall distance matrix#
+                mycoindists <- coindistsdf[mycoins,mycoins]#
+#
+                for (g in 1:taskredundancy){#
+                    # Each crowd-sourcing contributor assesses the three coin group slightly differently.#
+                    # Hence, jitter the small distance matrix for the three coins accordingly.#
+                    mynoisydists <- as.data.frame(sapply(mycoindists, jitter, amount=crowdnoise))#
+                    rownames(mynoisydists) <- colnames(mynoisydists)#
+                    mynoisydists <- as.dist(mynoisydists, upper=FALSE)#
+                    # Now split these three coins into two groups#
+                    mycoingroups <- pam(mynoisydists,2)$clustering#
+                    samegroup <- outer(mycoingroups, mycoingroups,FUN="==")#
+                    alltries <- samegroup#
+                    alltries[] <- TRUE#
+                    # Update the two overall matrices for coin-pairs grouped together and for total coin-pair comparisons#
+                    mcols <- match(colnames(samegroup),colnames(sameclusters))#
+                    mrows <- match(rownames(samegroup),rownames(sameclusters))#
+                    sameclusters[mrows,mcols] <- sameclusters[mrows,mcols] + samegroup#
+                    totalcomps[mrows,mcols] <- totalcomps[mrows,mcols] + alltries#
+                    if (e==1){ print(totalcomps[1:5,1:5]) }#
+                }#
+            }#
+        }#
+    }#
+}
+sameclusters <- coindistsdf#
+sameclusters[] <- 0#
+totalcomps <- sameclusters#
+#
+# We wish to compare each coin in the dataset to each other one a certain number of times, with a third random coin as part of the comparison. For example, we ensure a certain number of comparison draws for every pair of coins. For example, if we wish to esnure at least two draws per pair, it would  involve 99 * 98 * 2 comparison sets of three coins each):#
+drawspercoinpair <- 2#
+# Create a list for the different draws, but as per below, we will get two draws per list item, so:#
+smpls <- vector("list", drawspercoinpair/2)#
+#
+# In each list item, store a pairwise matrix and assign a random third coin at each matrix node. Each pairwise coin matrix will enable 2 random draws per coin pair (one in the upper and one in the lower triangle).#
+for (i in 1: length(smpls)){#
+    # (The multiple for-loops are not optimal)#
+    threecomp <- totalcomps#
+    threecomp[] <- NA#
+    for (a in 1:nrow(threecomp)){#
+        for (b in 1:ncol(threecomp)){#
+            if (b != a){#
+                focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+                othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+                threecomp[a,b] <- othercoins[sample(1:length(othercoins), 1)] #third coin#
+            }#
+        }#
+    }#
+    smpls[[i]] <- threecomp#
+}#
+#
+# We try to reconstruct the original distance matrix by making comparisons per coin pair and keeping track of the results. In this example, each coin pair is compared 4 times with a different third coin each time. Each three-coin comparison set is also hypothetically 'crowdsourced' a certain number of times (taskredundancy) with a certain amount of 'noise' (meant to model contributors uncertainty in assessing coin similarity). So the total number of assessments is 99 * 98 * 4 * 5 = 194040.#
+#
+#For example#
+taskredundancy <- 5#
+crowdnoise <- 1 * sd(coindists)#
+#
+# We will crowdsourcing each comparison and counting up how many times each contributor, faced wiht the same comparison set groups certain coins together. In addition to the guaranteed pairs (as above), the third coin will ensure certain pairs get compared extra times (at random), so we should also keep track of total number of comparisons per pair. We can do this in lists identical to smpls.#
+#
+# Now loop through the samples and do the comparisons#
+for (d in 1:length(smpls)){#
+    mysamples <- smpls[[d]]#
+    for (e in 1:nrow(mysamples)){#
+        coin1 <- rownames(mysamples)[e]#
+        for (f in 1:ncol(mysamples)){#
+            if (f != e){#
+                coin2 <- colnames(mysamples)[f]#
+                coin3 <- mysamples[e,f]#
+                mycoins <- c(coin1,coin2,coin3)             #
+                # Extract the relevant section of the overall distance matrix#
+                mycoindists <- coindistsdf[mycoins,mycoins]#
+#
+                for (g in 1:taskredundancy){#
+                    # Each crowd-sourcing contributor assesses the three coin group slightly differently.#
+                    # Hence, jitter the small distance matrix for the three coins accordingly.#
+                    mynoisydists <- as.data.frame(sapply(mycoindists, jitter, amount=crowdnoise))#
+                    rownames(mynoisydists) <- colnames(mynoisydists)#
+                    mynoisydists <- as.dist(mynoisydists, upper=FALSE)#
+                    # Now split these three coins into two groups#
+                    mycoingroups <- pam(mynoisydists,2)$clustering#
+                    samegroup <- outer(mycoingroups, mycoingroups,FUN="==")#
+                    alltries <- samegroup#
+                    alltries[] <- TRUE#
+                    # Update the two overall matrices for coin-pairs grouped together and for total coin-pair comparisons#
+                    mcols <- match(colnames(samegroup),colnames(sameclusters))#
+                    mrows <- match(rownames(samegroup),rownames(sameclusters))#
+                    sameclusters[mrows,mcols] <- sameclusters[mrows,mcols] + samegroup#
+                    totalcomps[mrows,mcols] <- totalcomps[mrows,mcols] + alltries#
+                    if (f==ncol(mysamples)){ print(totalcomps[1:5,1:5]) }#
+                }#
+            }#
+        }#
+    }#
+}
+# Then compute a statistic: 1-a/b, where a is the number of clusterings in which both coins are in the same cluster, and b is the number of draws for clustering in which both coins were involved.#
+distrecon <- sameclusters / totalcomps#
+distrecon <- 1 - distrecon#
+distrecon <- as.dist(distrecon, diag=FALSE, upper=FALSE)#
+#
+# Plot dendrograms after clustering the original distance matrix and the reconstructed one.#
+odendro <- hclust(coindists, method="average")#
+rdendro <- hclust(distrecon, method="average")#
+dev.new(device=pdf, width=10, height=7)#
+par(mfrow=c(1,2))#
+par(mar=c(0, 0, 4, 0))#
+plot(odendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Clusters", cex=0.3)#
+plot(rdendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Reconstructed Clusters", cex=0.3)#
+par(mar=c(5, 4, 4, 2) + 0.1)
+min(totalcomps)
+## Crowd-sourced Distance Matrix via Splitting of Three Coin Sets ###
+#
+# Set up some matrices to store counts of the number of instances (a) when coin pairs are assigned the same group, and (b) total number of comparisons of that coin pair.#
+sameclusters <- coindistsdf#
+sameclusters[] <- 0#
+totalcomps <- sameclusters#
+#
+# We wish to compare each coin in the dataset to each other one a certain number of times, with a third random coin as part of the comparison. For example, we ensure a certain number of comparison draws for every pair of coins. For example, if we wish to esnure at least two draws per pair, it would  involve 99 * 98 * 2 comparison sets of three coins each):#
+drawspercoinpair <- 2#
+# Create a list for the different draws, but as per below, we will get two draws per list item, so:#
+smpls <- vector("list", drawspercoinpair/2)#
+#
+# In each list item, store a pairwise matrix and assign a random third coin at each matrix node. Each pairwise coin matrix will enable 2 random draws per coin pair (one in the upper and one in the lower triangle).#
+for (i in 1: length(smpls)){#
+    # (The multiple for-loops are not optimal)#
+    threecomp <- totalcomps#
+    threecomp[] <- NA#
+    for (a in 1:nrow(threecomp)){#
+        for (b in 1:ncol(threecomp)){#
+            if (b != a){#
+                focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+                othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+                threecomp[a,b] <- othercoins[sample(1:length(othercoins), 1)] #third coin#
+            }#
+        }#
+    }#
+    smpls[[i]] <- threecomp#
+}#
+#
+# We try to reconstruct the original distance matrix by making comparisons per coin pair and keeping track of the results. In this example, each coin pair is compared 4 times with a different third coin each time. Each three-coin comparison set is also hypothetically 'crowdsourced' a certain number of times (taskredundancy) with a certain amount of 'noise' (meant to model contributors uncertainty in assessing coin similarity). So the total number of assessments is 99 * 98 * 4 * 5 = 194040.#
+#
+#For example#
+taskredundancy <- 10#
+crowdnoise <- 1 * sd(coindists)#
+#
+# We will crowdsourcing each comparison and counting up how many times each contributor, faced wiht the same comparison set groups certain coins together. In addition to the guaranteed pairs (as above), the third coin will ensure certain pairs get compared extra times (at random), so we should also keep track of total number of comparisons per pair. We can do this in lists identical to smpls.#
+#
+# Now loop through the samples and do the comparisons#
+for (d in 1:length(smpls)){#
+    mysamples <- smpls[[d]]#
+    for (e in 1:nrow(mysamples)){#
+        coin1 <- rownames(mysamples)[e]#
+        for (f in 1:ncol(mysamples)){#
+            if (f != e){#
+                coin2 <- colnames(mysamples)[f]#
+                coin3 <- mysamples[e,f]#
+                mycoins <- c(coin1,coin2,coin3)             #
+                # Extract the relevant section of the overall distance matrix#
+                mycoindists <- coindistsdf[mycoins,mycoins]#
+#
+                for (g in 1:taskredundancy){#
+                    # Each crowd-sourcing contributor assesses the three coin group slightly differently.#
+                    # Hence, jitter the small distance matrix for the three coins accordingly.#
+                    mynoisydists <- as.data.frame(sapply(mycoindists, jitter, amount=crowdnoise))#
+                    rownames(mynoisydists) <- colnames(mynoisydists)#
+                    mynoisydists <- as.dist(mynoisydists, upper=FALSE)#
+                    # Now split these three coins into two groups#
+                    mycoingroups <- pam(mynoisydists,2)$clustering#
+                    samegroup <- outer(mycoingroups, mycoingroups,FUN="==")#
+                    alltries <- samegroup#
+                    alltries[] <- TRUE#
+                    # Update the two overall matrices for coin-pairs grouped together and for total coin-pair comparisons#
+                    mcols <- match(colnames(samegroup),colnames(sameclusters))#
+                    mrows <- match(rownames(samegroup),rownames(sameclusters))#
+                    sameclusters[mrows,mcols] <- sameclusters[mrows,mcols] + samegroup#
+                    totalcomps[mrows,mcols] <- totalcomps[mrows,mcols] + alltries#
+                    if (f==ncol(mysamples)){ print(totalcomps[1:5,1:5]) }#
+                }#
+            }#
+        }#
+    }#
+}#
+#
+# Then compute a statistic: 1-a/b, where a is the number of clusterings in which both coins are in the same cluster, and b is the number of draws for clustering in which both coins were involved.#
+distrecon <- sameclusters / totalcomps#
+distrecon <- 1 - distrecon#
+distrecon <- as.dist(distrecon, diag=FALSE, upper=FALSE)#
+#
+# Plot dendrograms after clustering the original distance matrix and the reconstructed one.#
+odendro <- hclust(coindists, method="average")#
+rdendro <- hclust(distrecon, method="average")#
+dev.new(device=pdf, width=10, height=7)#
+par(mfrow=c(1,2))#
+par(mar=c(0, 0, 4, 0))#
+plot(odendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Clusters", cex=0.3)#
+plot(rdendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Reconstructed Clusters", cex=0.3)#
+par(mar=c(5, 4, 4, 2) + 0.1)
+#So the total number of assessments is:#
+nrow(coindists) * (nrow(coindists)-1) * drawspercoinpair * taskredundancy.
+nrow(coindists) * (nrow(coindists)-1) * drawspercoinpair * taskredundancy
+length(coindists)
+nrow(coindists)
+nrow(coindistsdf)
+nrow(coindistsdf) * (nrow(coindistsdf)-1) * drawspercoinpair * taskredundancy
+quit("no")
+library(ape)#
+library(cluster)#
+#
+#############################
+#
+## Simulated Coin Dataset and Distance Matrix ###
+#
+# As an example, create a colaescent tree of 99 coins (with 49 extinct 'nodes' and 50 'tips').#
+set.seed(101)#
+cointree <- rcoal(50, br=runif)#
+# Not yet sure why node labels won't plot#
+#plot(cointree, show.tip.label=TRUE, show.node.label=TRUE, cex=0.5)#
+#  Brownian motion to simulate the evolution of 5 continuous, uncorrelated traits according to the above tree#
+cointraits <- replicate(5, rTraitCont(cointree, ancestor=TRUE))#
+# Calculate a Euclidean distance matrix#
+coindists <- dist(cointraits, method="euclidean")#
+coindistsdf <- as.data.frame(as.matrix(coindists))#
+#
+#############################
+#
+## Crowd-sourced Distance Matrix via Splitting of Coin Triplets ###
+#
+# Set up some matrices to store counts of the number of instances (a) when coin pairs are assigned the same group, and (b) total number of comparisons of that coin pair.#
+sameclusters <- coindistsdf#
+sameclusters[] <- 0#
+totalcomps <- sameclusters#
+#
+# We wish to compare each coin in the dataset to each other one a certain number of times, with a third random coin as part of the comparison. For example, we ensure a certain number of comparison draws for every pair of coins. For example, if we wish to esnure at least two draws per pair, it would  involve 99 * 98 * 2 comparison sets of coin triplets):#
+drawspercoinpair <- 2#
+# Create a list for the different draws, but as per below, we will get two draws per list item, so:#
+smpls <- vector("list", drawspercoinpair/2)#
+#
+# In each list item, store a pairwise matrix and assign a random third coin at each matrix node. Each pairwise coin matrix will enable 2 random draws per coin pair (one in the upper and one in the lower triangle).#
+for (i in 1: length(smpls)){#
+    # (The multiple for-loops are not optimal)#
+    threecomp <- totalcomps#
+    threecomp[] <- NA#
+    for (a in 1:nrow(threecomp)){#
+        for (b in 1:ncol(threecomp)){#
+            if (b != a){#
+                focalpair <- c(names(threecomp[a]),names(threecomp[b]))#
+                othercoins <- names(threecomp)[!names(threecomp) %in% focalpair]#
+                threecomp[a,b] <- othercoins[sample(1:length(othercoins), 1)] #third coin#
+            }#
+        }#
+    }#
+    smpls[[i]] <- threecomp#
+}#
+#
+# We try to reconstruct the original distance matrix by making comparisons per coin pair and keeping track of the results. In this example, each coin pair is compared 4 times with a different third coin each time. Each three-coin comparison set is also hypothetically 'crowdsourced' a certain number of times (taskredundancy) with a certain amount of 'noise' (meant to model contributors uncertainty in assessing coin similarity).#
+#
+#For example#
+taskredundancy <- 10#
+crowdnoise <- 1 * sd(coindists)#
+#
+#So the total number of assessments is:#
+nrow(coindistsdf) * (nrow(coindistsdf)-1) * drawspercoinpair * taskredundancy#
+#
+# We will crowdsourcing each comparison and counting up how many times each contributor, faced wiht the same comparison set groups certain coins together. In addition to the guaranteed pairs (as above), the third coin will ensure certain pairs get compared extra times (at random), so we should also keep track of total number of comparisons per pair. We can do this in lists identical to smpls.#
+#
+# Now loop through the samples and do the comparisons#
+for (d in 1:length(smpls)){#
+    mysamples <- smpls[[d]]#
+    for (e in 1:nrow(mysamples)){#
+        coin1 <- rownames(mysamples)[e]#
+        for (f in 1:ncol(mysamples)){#
+            if (f != e){#
+                coin2 <- colnames(mysamples)[f]#
+                coin3 <- mysamples[e,f]#
+                mycoins <- c(coin1,coin2,coin3)             #
+                # Extract the relevant section of the overall distance matrix#
+                mycoindists <- coindistsdf[mycoins,mycoins]#
+#
+                for (g in 1:taskredundancy){#
+                    # Each crowd-sourcing contributor assesses the three coin group slightly differently.#
+                    # Hence, jitter the small distance matrix for the three coins accordingly.#
+                    mynoisydists <- as.data.frame(sapply(mycoindists, jitter, amount=crowdnoise))#
+                    rownames(mynoisydists) <- colnames(mynoisydists)#
+                    mynoisydists <- as.dist(mynoisydists, upper=FALSE)#
+                    # Now split these three coins into two groups#
+                    mycoingroups <- pam(mynoisydists,2)$clustering#
+                    samegroup <- outer(mycoingroups, mycoingroups,FUN="==")#
+                    alltries <- samegroup#
+                    alltries[] <- TRUE#
+                    # Update the two overall matrices for coin-pairs grouped together and for total coin-pair comparisons#
+                    mcols <- match(colnames(samegroup),colnames(sameclusters))#
+                    mrows <- match(rownames(samegroup),rownames(sameclusters))#
+                    sameclusters[mrows,mcols] <- sameclusters[mrows,mcols] + samegroup#
+                    totalcomps[mrows,mcols] <- totalcomps[mrows,mcols] + alltries#
+                    #if (f==ncol(mysamples)){ print(totalcomps[1:5,1:5]) } # just a check...#
+                }#
+            }#
+        }#
+    }#
+}#
+#
+# Then compute a statistic: 1-a/b, where a is the number of clusterings in which both coins are in the same cluster, and b is the number of draws for clustering in which both coins were involved.#
+distrecon <- sameclusters / totalcomps#
+distrecon <- 1 - distrecon#
+distrecon <- as.dist(distrecon, diag=FALSE, upper=FALSE)#
+#
+# Plot dendrograms after clustering the original distance matrix and the reconstructed one.#
+odendro <- hclust(coindists, method="average")#
+rdendro <- hclust(distrecon, method="average")#
+dev.new(device=pdf, width=10, height=7)#
+par(mfrow=c(1,2))#
+par(mar=c(0, 0, 4, 0))#
+plot(odendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Original Clusters", cex=0.3)#
+plot(rdendro,axes=FALSE, sub="", xlab="", ylab=NULL, main="Reconstructed Clusters", cex=0.3)#
+par(mar=c(5, 4, 4, 2) + 0.1)#
+#
+# Plot correlation#
+plot(coindists,distrecon,pch=".")
+par(mfrow=c(1,1))
+par(mfrow=c(1,1))#
+plot(coindists,distrecon,pch=".")
+?corr
+?cor
+?rescale
+?scale
+stdRange <- function(x){#
+    (x-min(x)) / (max(x)-min(x))#
+}
+coindists01 <- stdRange(coindists)
+# Plot correlation#
+par(mfrow=c(1,1))#
+plot(coindists01,distrecon,pch=".")
+plot(coindists,distrecon,pch=".")#
+cor(coindists,distrecon, method="spearman")
+quit("no")
+library(gstat)
+?gstat
+show.vgms()
+library(intamap)#
+data(meuse)#
+meuse$value = log(meuse$zinc)#
+coordinates(meuse) = ~x+y#
+data(meuse.grid)#
+gridded(meuse.grid)=~x+y#
+#
+spplot(meuse,"value",col.regions = bpy.colors())#
+#
+output = interpolate(observations = meuse,#
+predictionLocations = meuse.grid,#
+outputWhat = list(mean=T, variance=T, excprob = 7),#
+maximumTime = 30,#
+methodName = "automatic",#
+optList = list() )#
+#
+plot(output)#
+output$variogramModel#
+summary(output)#
+summary(t(output$outputTable))
+plot(output$variogrammodel)
+plot(output$variogramModel)
+str(output)
+plot(output, ask=F)
+plot(output[[1]])
+plot(output[[2]])
+plot(output[2])
+plot(output)quit("no")
+car::recode
+ewcosw <- car::recode
+quit("no")
+### SAA 2015 -- Open Methods Section (April 2015) ####
+### Andrew Bevan (University College London, a.bevan_at_ucl.ac.uk) ####
+#
+## See also Bevan, A. 2012. Spatial methods for analysing large-scale artefact inventories, Antiquity 86.332: 492-506.###
+#
+###########################################
+#
+## 1. Set-Up ###
+#
+#Set a working directory#
+setwd("~/Desktop/saa-openmethods-bevan") #MacOSX#
+#
+# Add libraries#
+library(rgdal) # spatial data interoperability#
+library(maptools) # various methods for spatial data#
+library(spatstat) # point process models and other utilities#
+#
+# Add a couple of custom functions for scalebar, north arrow etc.#
+source("utilities.R")#
+#
+###########################################
+#
+## 2. Basic Data Manipulation ###
+#
+# Load basic geogrpahy for UK West Country (from http://gadm.org, generalised)#
+wc <- readOGR("data/shp/wc", "wc")#
+#
+# Read in Iron Age coin data (from the Celtic Coin Index, within the Portable Antiquities Scheme; http://finds.org.uk) and convert to spatial data#
+iacoins <- read.csv("data/csv/iacoins.csv", header=TRUE)#
+coordinates(iacoins) <- ~Easting + Northing#
+proj4string(iacoins) <- CRS(proj4string(wc))#
+#
+# Example of dataset re-location#
+set.seed(101)#
+myshift <- c(10000*runif(1),10000*runif(1))#
+wc <- elide(wc, shift=myshift)#
+iacoins <- elide(iacoins, shift=myshift)#
+#
+# Create a convenient bounding box polygon#
+wcbox <- bbox(wc)#
+wcbox <- Polygon(cbind(c(wcbox[1,1], wcbox[1,1], wcbox[1,2], wcbox[1,2], wcbox[1,1]), c(wcbox[2,1], wcbox[2,2], wcbox[2,2], wcbox[2,1], wcbox[2,1])))#
+wcbox <- Polygons(list(wcbox), "1")#
+wcbox <- SpatialPolygons(list(wcbox), 1:1, proj4string=CRS(proj4string(wc)))#
+#
+# Jitter coin findspot coordinates by a metre to remove superimposed finds#
+set.seed(101)#
+xys <- coordinates(iacoins)#
+xys[ ,1] <-  xys[ ,1] + runif(xys[ ,1], -1,1)#
+xys[ ,2] <-  xys[ ,2] + runif(xys[ ,2], -1,1)#
+iacoins <- iacoins@data#
+iacoins$Easting <- xys[,1]#
+iacoins$Northing <- xys[,2]#
+coordinates(iacoins) <- ~Easting + Northing#
+proj4string(iacoins) <- CRS(proj4string(iacoins))#
+#
+###########################################
+#
+## 3. Regional Analysis ###
+#
+# Clean up materials#
+golddenoms <- c("Stater (gold)","Quarter stater (gold)")#
+iacoins$Mat[iacoins$PrimaryMaterial=="Gold" | iacoins$Denomination %in% golddenoms] <- "Au"#
+iacoins$Mat[is.na(iacoins$Mat)] <- "Other"#
+#
+# Extract those coins associated with so-called Dobunni tribal area, and all others.#
+dobunni <- iacoins[iacoins$Tribe=="Dobunni",]#
+otherIA <- iacoins[iacoins$Tribe!="Dobunni",]#
+#
+# Euclidean mean centre of Dobunni-type coins#
+dmc <- SpatialPoints(data.frame(X=mean(coordinates(dobunni)[ ,1]), Y=mean(coordinates(dobunni)[ ,2])), proj4string=CRS(proj4string(dobunni)))#
+#
+# Location and size of north arrow, scalebar#
+xpos <- 250000#
+ypos <- 110000#
+scalesize <- 50000#
+#
+# Plot#
+plot(wc, col="grey75", border="grey75")#
+plot(wcbox, add=TRUE)#
+plot(otherIA, pch=19, cex=0.2, col="grey25", add=TRUE)#
+plot(dobunni, pch=19, cex=0.5, col="red", add=TRUE)#
+plot(dmc, pch=15, cex=1.5, col="yellow", add=TRUE)#
+legend("topleft",legend=c("Dobunni-type","Other coins","Mean centre"), col=c("red","grey25","yellow"), pch=c(19,19,15), pt.cex=c(0.5,0.2,1.5), bty='n', cex=0.8, inset=c(0.12,0.05))#
+northArrow(xpos, ypos, scalesize / 5, lwd=0.5)#
+scaleBar(xpos + (0.5 * scalesize), ypos - (0.5 * scalesize), scalesize, scalesize / 6, lwd=0.5, col="white")#
+text(xpos, ypos - (0.7*scalesize), labels="50 km", cex=0.75)#
+#
+# Convert spatstat objects#
+dobC <- as.ppp(coordinates(dobunni),as.owin(wc))#
+othC <- as.ppp(coordinates(otherIA),as.owin(wc))#
+#
+# Kernel density surface with a 1sd=7.5km Gaussian kernel and 500m cell size.#
+dobdens <- density(dobC, sigma=7500, edge=TRUE, eps=500)#
+dobdens[as.matrix(dobdens) < 0] <- 0#
+#
+# Created a marked point pattern for gold Dobunni-type coins and those of other materials.#
+mDobAu <- as.ppp(coordinates(dobunni[dobunni$Mat == 'Au',]),as.owin(wc))#
+marks(mDobAu) <- as.factor("Au")#
+mDobOth <- as.ppp(coordinates(dobunni[dobunni$Mat == 'Other',]),as.owin(wc))#
+marks(mDobOth) <- as.factor("Other")#
+mDobC <- superimpose(mDobOth,mDobAu)#
+# Create a relative risk surface of gold versus other materials (silver or silver wash)#
+rrDobC <- relrisk(mDobC, sigma=7500, edge=TRUE, eps=500)#
+# Remove mapping of this surface in areas of extremley low overall density (arbitrary eyeballed threshold)#
+denscutoff <- 0.000000004#
+rrDobC[as.matrix(dobdens)< denscutoff] <- NA#
+#
+#  Colour ramp and plot#
+tc <- colourmap(rev(heat.colors(10)), breaks=c(seq(0,1,0.1)))#
+dev.new(width=8, height=4)#
+par(mfrow=c(1,2))#
+par(mar=c(0, 0, 0, 0))#
+plot(wcbox)#
+plot(wc, col="grey65", border=NA, add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Other',], pch=15, cex=0.5, col="cyan", add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Au',], pch=19, cex=0.4, col="brown3", add=TRUE)#
+plot(dmc, pch=15, cex=0.6, add=TRUE)#
+plot(wcbox, add=TRUE)#
+northArrow(xpos, ypos, scalesize / 5, lwd=0.5)#
+scaleBar(xpos + (0.5 * scalesize), ypos - (0.5 * scalesize), scalesize, scalesize / 6, lwd=0.5, col="white")#
+text(xpos, ypos - (0.7*scalesize), labels="50 km", cex=0.75)#
+plot(wcbox)#
+plot(wc, col="grey65", border=NA, add=TRUE)#
+plot(rrDobC, col=tc, add=TRUE)#
+plot(tc, vertical=T, add=T, xlim=c(460000,470000), ylim=c(190000,270000), cex.axis=0.7)#
+plot(dobunni[dobunni$Mat == 'Other',], pch=15, cex=0.5, col="cyan", add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Au',], pch=19, cex=0.4, col="brown3", add=TRUE)#
+plot(dmc, pch=15, cex=0.6, add=TRUE)#
+plot(wcbox, add=TRUE)
+plot(wcbox, main="Relative risk of gold coins")
+?plot
+?title
+plot(wcbox)
+title("Relative risk of gold coins")
+?title
+title("Relative risk of gold coins", line=-2)
+title("Relative risk of gold coins", line=-3)
+title("Relative risk of gold coins", line=-3, cex=0.5)
+?title
+plot(wcbox)
+title("Relative risk of gold coins", line=-3, cex=0.5)
+title("Relative risk of gold coins", line=-3, cex.main=0.5)
+title("Relative risk of gold coins", line=-3, cex.main=0.8)
+#  Colour ramp and plot#
+tc <- colourmap(rev(heat.colors(10)), breaks=c(seq(0,1,0.1)))#
+dev.new(width=8, height=4)#
+par(mfrow=c(1,2))#
+par(mar=c(0, 0, 0, 0))#
+plot(wcbox)#
+plot(wc, col="grey65", border=NA, add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Other',], pch=15, cex=0.5, col="cyan", add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Au',], pch=19, cex=0.4, col="brown3", add=TRUE)#
+plot(dmc, pch=15, cex=0.6, add=TRUE)#
+plot(wcbox, add=TRUE)#
+northArrow(xpos, ypos, scalesize / 5, lwd=0.5)#
+scaleBar(xpos + (0.5 * scalesize), ypos - (0.5 * scalesize), scalesize, scalesize / 6, lwd=0.5, col="white")#
+text(xpos, ypos - (0.7*scalesize), labels="50 km", cex=0.75)#
+title("Gold (red) and other Iron Age coins", line=-3, cex.main=0.8)#
+plot(wcbox)#
+plot(wc, col="grey65", border=NA, add=TRUE)#
+plot(rrDobC, col=tc, add=TRUE)#
+plot(tc, vertical=T, add=T, xlim=c(460000,470000), ylim=c(190000,270000), cex.axis=0.7)#
+plot(dobunni[dobunni$Mat == 'Other',], pch=15, cex=0.5, col="cyan", add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Au',], pch=19, cex=0.4, col="brown3", add=TRUE)#
+plot(dmc, pch=15, cex=0.6, add=TRUE)#
+plot(wcbox, add=TRUE)#
+title("Relative risk of gold coins", line=-3, cex.main=0.8)
+#  Colour ramp and plot#
+tc <- colourmap(rev(heat.colors(10)), breaks=c(seq(0,1,0.1)))#
+dev.new(width=8, height=4)#
+par(mfrow=c(1,2))#
+par(mar=c(0, 0, 0, 0))#
+plot(wcbox)#
+plot(wc, col="grey65", border=NA, add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Other',], pch=15, cex=0.5, col="cyan", add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Au',], pch=19, cex=0.4, col="brown3", add=TRUE)#
+plot(dmc, pch=15, cex=0.6, add=TRUE)#
+plot(wcbox, add=TRUE)#
+northArrow(xpos, ypos, scalesize / 5, lwd=0.5)#
+scaleBar(xpos + (0.5 * scalesize), ypos - (0.5 * scalesize), scalesize, scalesize / 6, lwd=0.5, col="white")#
+text(xpos, ypos - (0.7*scalesize), labels="50 km", cex=0.75)#
+title("Gold (red) and other Iron Age coins", line=-3, cex.main=0.8)#
+plot(wcbox)#
+plot(wc, col="grey65", border=NA, add=TRUE)#
+plot(rrDobC, col=tc, add=TRUE)#
+plot(tc, vertical=T, add=T, xlim=c(460000,470000), ylim=c(190000,270000), cex.axis=0.7)#
+plot(dobunni[dobunni$Mat == 'Other',], pch=15, cex=0.5, col="cyan", add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Au',], pch=19, cex=0.4, col="brown3", add=TRUE)#
+plot(dmc, pch=15, cex=0.6, add=TRUE)#
+plot(wcbox, add=TRUE)#
+title("Relative risk of gold coins", line=-2.5, cex.main=0.8)
+#  Colour ramp and plot#
+tc <- colourmap(rev(heat.colors(10)), breaks=c(seq(0,1,0.1)))#
+dev.new(width=8, height=4)#
+par(mfrow=c(1,2))#
+par(mar=c(0, 0, 0, 0))#
+plot(wcbox)#
+plot(wc, col="grey65", border=NA, add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Other',], pch=15, cex=0.5, col="cyan", add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Au',], pch=19, cex=0.4, col="brown3", add=TRUE)#
+plot(dmc, pch=15, cex=0.6, add=TRUE)#
+plot(wcbox, add=TRUE)#
+northArrow(xpos, ypos, scalesize / 5, lwd=0.5)#
+scaleBar(xpos + (0.5 * scalesize), ypos - (0.5 * scalesize), scalesize, scalesize / 6, lwd=0.5, col="white")#
+text(xpos, ypos - (0.7*scalesize), labels="50 km", cex=0.75)#
+title("Gold (red) and other Iron Age coins", line=-3, cex.main=0.8)#
+plot(wcbox)#
+plot(wc, col="grey65", border=NA, add=TRUE)#
+plot(rrDobC, col=tc, add=TRUE)#
+plot(tc, vertical=T, add=T, xlim=c(460000,470000), ylim=c(190000,270000), cex.axis=0.7)#
+plot(dobunni[dobunni$Mat == 'Other',], pch=15, cex=0.5, col="cyan", add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Au',], pch=19, cex=0.4, col="brown3", add=TRUE)#
+plot(dmc, pch=15, cex=0.6, add=TRUE)#
+plot(wcbox, add=TRUE)#
+title("Relative risk of gold coins", line=-2.7, cex.main=0.8)
+#  Colour ramp and plot#
+tc <- colourmap(rev(heat.colors(10)), breaks=c(seq(0,1,0.1)))#
+dev.new(width=8, height=4)#
+par(mfrow=c(1,2))#
+par(mar=c(0, 0, 0, 0))#
+plot(wcbox)#
+plot(wc, col="grey65", border=NA, add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Other',], pch=15, cex=0.5, col="cyan", add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Au',], pch=19, cex=0.4, col="brown3", add=TRUE)#
+plot(dmc, pch=15, cex=0.6, add=TRUE)#
+plot(wcbox, add=TRUE)#
+northArrow(xpos, ypos, scalesize / 5, lwd=0.5)#
+scaleBar(xpos + (0.5 * scalesize), ypos - (0.5 * scalesize), scalesize, scalesize / 6, lwd=0.5, col="white")#
+text(xpos, ypos - (0.7*scalesize), labels="50 km", cex=0.75)#
+title("Gold (red) and other Iron Age coins", line=-3, cex.main=0.8)#
+plot(wcbox)#
+plot(wc, col="grey65", border=NA, add=TRUE)#
+plot(rrDobC, col=tc, add=TRUE)#
+plot(tc, vertical=T, add=T, xlim=c(460000,470000), ylim=c(190000,270000), cex.axis=0.7)#
+plot(dobunni[dobunni$Mat == 'Other',], pch=15, cex=0.5, col="cyan", add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Au',], pch=19, cex=0.4, col="brown3", add=TRUE)#
+plot(dmc, pch=15, cex=0.6, add=TRUE)#
+plot(wcbox, add=TRUE)#
+title("Relative risk of gold coins", line=-2.3, cex.main=0.8)
+# Plot#
+dev.new(width=8, height=4)#
+par(mfrow=c(1,2))#
+par(mar=c(0, 0, 0, 0))#
+plot(wcbox)#
+plot(wc, col="grey65", border=NA, add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Other',], pch=15, cex=0.5, col="cyan", add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Au',], pch=19, cex=0.4, col="brown3", add=TRUE)#
+plot(dmc, pch=15, cex=0.6, add=TRUE)#
+plot(wcbox, add=TRUE)#
+northArrow(xpos, ypos, scalesize / 5, lwd=0.5)#
+scaleBar(xpos + (0.5 * scalesize), ypos - (0.5 * scalesize), scalesize, scalesize / 6, lwd=0.5, col="white")#
+text(xpos, ypos - (0.7*scalesize), labels="50 km", cex=0.75)#
+title("Gold (red) and other Iron Age coins", line=-2.3, cex.main=0.8)#
+plot(wcbox)#
+plot(wc, col="grey65", border=NA, add=TRUE)#
+plot(rrDobC, col=tc, add=TRUE)#
+plot(tc, vertical=T, add=T, xlim=c(460000,470000), ylim=c(190000,270000), cex.axis=0.7)#
+plot(dobunni[dobunni$Mat == 'Other',], pch=15, cex=0.5, col="cyan", add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Au',], pch=19, cex=0.4, col="brown3", add=TRUE)#
+plot(dmc, pch=15, cex=0.6, add=TRUE)#
+plot(wcbox, add=TRUE)#
+title("Relative risk of gold (red) versus other Dobunni-type coins", line=-2.3, cex.main=0.8)
+# Plot#
+dev.new(width=8, height=4)#
+par(mfrow=c(1,2))#
+par(mar=c(0, 0, 0, 0))#
+plot(wcbox)#
+plot(wc, col="grey65", border=NA, add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Other',], pch=15, cex=0.5, col="cyan", add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Au',], pch=19, cex=0.4, col="brown3", add=TRUE)#
+plot(dmc, pch=15, cex=0.6, add=TRUE)#
+plot(wcbox, add=TRUE)#
+northArrow(xpos, ypos, scalesize / 5, lwd=0.5)#
+scaleBar(xpos + (0.5 * scalesize), ypos - (0.5 * scalesize), scalesize, scalesize / 6, lwd=0.5, col="white")#
+text(xpos, ypos - (0.7*scalesize), labels="50 km", cex=0.75)#
+title("Gold (red) and other 'Dobunnni'-type coins", line=-2.3, cex.main=0.8)#
+plot(wcbox)#
+plot(wc, col="grey65", border=NA, add=TRUE)#
+plot(rrDobC, col=tc, add=TRUE)#
+plot(tc, vertical=T, add=T, xlim=c(460000,470000), ylim=c(190000,270000), cex.axis=0.7)#
+plot(dobunni[dobunni$Mat == 'Other',], pch=15, cex=0.5, col="cyan", add=TRUE)#
+plot(dobunni[dobunni$Mat == 'Au',], pch=19, cex=0.4, col="brown3", add=TRUE)#
+plot(dmc, pch=15, cex=0.6, add=TRUE)#
+plot(wcbox, add=TRUE)#
+title("Relative risk of gold coins", line=-2.3, cex.main=0.8)
+# Plot#
+plot(wc, col="grey75", border="grey75")#
+plot(wcbox, add=TRUE)#
+plot(otherIA, pch=19, cex=0.2, col="grey25", add=TRUE)#
+plot(dobunni, pch=19, cex=0.5, col="red", add=TRUE)#
+plot(dmc, pch=15, cex=1.5, col="yellow", add=TRUE)#
+legend("topleft",legend=c("Dobunni-type","Other coins","Mean centre"), col=c("red","grey25","yellow"), pch=c(19,19,15), pt.cex=c(0.5,0.2,1.5), bty='n', cex=0.8, inset=c(0.12,0.05))#
+northArrow(xpos, ypos, scalesize / 5, lwd=0.5)#
+scaleBar(xpos + (0.5 * scalesize), ypos - (0.5 * scalesize), scalesize, scalesize / 6, lwd=0.5, col="white")#
+text(xpos, ypos - (0.7*scalesize), labels="50 km", cex=0.75)
+quit("no")
