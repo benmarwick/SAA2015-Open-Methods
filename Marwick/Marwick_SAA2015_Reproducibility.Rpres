@@ -53,7 +53,7 @@ Current workflow in archaeology & many other disciplines
 ![alt text](figures/beaker.jpg)
 
 
-My workflow & tools
+My workflow & tools for reproducibility 
 ========================================================
 Using literate statistical programming
 
@@ -70,7 +70,7 @@ Using [permissive licenses](http://opensource.org/licenses/MIT) & [permanent URL
 ***
              
 -------------- ----------- --------------
-<img src="figures/r-project.jpg" width="120">   <img src="figures/markdown.png" width="120"> <img src="figures/git.png" width="170">
+<img src="figures/r-project.jpg" width="100">   <img src="figures/markdown.png" width="100"> <img src="figures/git.png" width="140"> <img src="figures/TravisCl.png" width="50">
 
 ![alt text](figures/workflow-wide.png)
 <div align="center"><img src="figures/knitr.png" alt="alt text" width="200"><img src="figures/docker.png" alt="alt text" width="250"></div>
