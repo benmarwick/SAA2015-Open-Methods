@@ -59,7 +59,7 @@ Using literate statistical programming
 
 Using an [open source programming language](http://www.r-project.org/) &  [open document formatting language](http://rmarkdown.rstudio.com/)
 
-Using [version control](http://git-scm.com/) & [continuous integration](http;??www.travis-ci.org)
+Using [version control](http://git-scm.com/) & [continuous integration](http://www.travis-ci.org)
 
 Using [dynamic documents](http://yihui.name/knitr/)
 
