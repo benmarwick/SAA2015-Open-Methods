@@ -12,7 +12,7 @@ Resources and projects discussed in the talk include:
  
 Further reading:
 
-Rollins, N. D., C. M. Barton, S. Bergin, M. Janssen, & A Lee (2014) A Computational Model Library for publishing model documentation and code. Environmental Modelling & Software 61:59–64. doi: [10.1016/j.envsoft.2014.06.022](http://dx.doi.org/10.1016/j.envsoft.2014.06.022)
+Rollins, N. D., C. M. Barton, S. Bergin, M. Janssen, & A Lee (2014) A Computational Model Library for publishing model documentation and code. _Environmental Modelling & Software_ 61:59–64. doi: [10.1016/j.envsoft.2014.06.022](http://dx.doi.org/10.1016/j.envsoft.2014.06.022)
 
 
 
