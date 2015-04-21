@@ -1,6 +1,6 @@
 # C. Michael Barton: Opening the Black Box: Enabling Transparency in Computation
 
-This repository includes the slides used to illustrate the talk entitled "Opening the Black Box: Enabling Transparency in Computation". 
+This repository includes the [slides](https://github.com/benmarwick/SAA2015-Open-Methods/tree/master/Barton_etal) used to illustrate the talk entitled "Opening the Black Box: Enabling Transparency in Computation". 
 
 This talk was presented in the session ['Open methods in archaeology: how to encourage reproducible research as the default practice'](http://core.tdar.org/collection/29739/open-methods-in-archaeology-how-to-encourage-reproducible-research-as-the-default-practice)
 
